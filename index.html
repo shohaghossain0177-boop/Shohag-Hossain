@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BarakahUnity" />
+    <meta name="theme-color" content="#0f766e" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/api/app-icon?size=180" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/api/app-icon?size=192" />
+    <link rel="shortcut icon" href="/api/app-icon?size=192" />
+    <title>BARAKAH MULTICARE HOSPITAL UNITY</title>
+    <meta name="description" content="দৈনিক ডিপোজিট, সদস্য হিসাব, ড্র ব্যবস্থাপনা, নিয়মাবলি, পিন নোটিশ এবং ইন-অ্যাপ আপডেট সিস্টেম — BARAKAH MULTICARE HOSPITAL UNITY।" />
+    <meta property="og:title" content="BARAKAH MULTICARE HOSPITAL UNITY" />
+    <meta property="og:description" content="দৈনিক ডিপোজিট, সদস্য হিসাব, ড্র ব্যবস্থাপনা, নিয়মাবলি ও রসিদ ডাউনলোড সিস্টেম।" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/api/app-icon?size=512" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+      window.__deferredPWAInstallPrompt = null;
+      window.__pwaInstalled = false;
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.__deferredPWAInstallPrompt = e;
+        window.dispatchEvent(new CustomEvent('pwa-install-ready'));
+      });
+      window.addEventListener('appinstalled', function () {
+        window.__pwaInstalled = true;
+        window.__deferredPWAInstallPrompt = null;
+        window.dispatchEvent(new CustomEvent('pwa-app-installed'));
+      });
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

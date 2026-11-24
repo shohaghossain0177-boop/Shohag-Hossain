@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --brand-primary: #0f766e;
+    --brand-primary-dark: #115e59;
+  }
+
+  html {
+    font-family: 'Noto Sans Bengali', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+  }
+
+  .font-mono-num {
+    font-family: 'IBM Plex Mono', 'Noto Sans Bengali', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@keyframes barakah-marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-barakah-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: barakah-marquee 24s linear infinite;
+  will-change: transform;
+}
+
+.animate-barakah-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-barakah-marquee {
+    animation: none;
+    padding-left: 0;
+    white-space: normal;
+  }
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

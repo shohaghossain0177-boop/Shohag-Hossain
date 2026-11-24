@@ -1,0 +1,367 @@
+{
+  "entities": {
+    "UnityConfig": {
+      "title": "UnityConfig",
+      "description": "Global application configuration, toggles, tickers, pinned notice, automated popups, and release changelog for Barakah Multicare Hospital Unity.",
+      "type": "object",
+      "properties": {
+        "adminName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Display name of the organization admin."
+        },
+        "cloudSyncUrl": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional external JSON backup/sync URL."
+        },
+        "updatedAtMs": {
+          "type": "number",
+          "description": "Client millisecond timestamp for version comparison."
+        },
+        "lastBackup": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Formatted Bangla timestamp of last save/sync."
+        },
+        "appConfig": {
+          "type": "object",
+          "description": "Nested application display, toggles, notice, popup, and changelog configuration."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Public visibility flag for transparent organization viewing."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when config document was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest config update."
+        }
+      },
+      "required": ["adminName", "cloudSyncUrl", "updatedAtMs", "lastBackup", "appConfig", "isPublic", "createdAt", "updatedAt"]
+    },
+    "MemberPublic": {
+      "title": "MemberPublic",
+      "description": "Public member record in the unlimited members directory (phone number masked for PII protection).",
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "number",
+          "description": "Unique numeric serial ID of the member."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Full display name of the member."
+        },
+        "maskedPhone": {
+          "type": "string",
+          "maxLength": 30,
+          "description": "Masked phone hint safe for public display (e.g. 017••••2160)."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Public transparency flag."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when member joined."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when member was last updated."
+        }
+      },
+      "required": ["memberId", "name", "maskedPhone", "isPublic", "createdAt", "updatedAt"]
+    },
+    "MemberContact": {
+      "title": "MemberContact",
+      "description": "Admin-isolated PII contact record storing the unmasked phone number for a member.",
+      "type": "object",
+      "properties": {
+        "memberId": {
+          "type": "number",
+          "description": "Corresponding member serial ID."
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 30,
+          "description": "Full unmasked phone number of the member (admin-only access)."
+        },
+        "adminEmail": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Admin owner email for secure list filtering."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["memberId", "phone", "adminEmail", "createdAt", "updatedAt"]
+    },
+    "DepositRecord": {
+      "title": "DepositRecord",
+      "description": "Individual daily deposit ledger entry linked to a member.",
+      "type": "object",
+      "properties": {
+        "depositId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Unique deposit record identifier."
+        },
+        "memberId": {
+          "type": "number",
+          "description": "Numeric serial ID of the member who made the deposit."
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Deposit date in YYYY-MM-DD format."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Deposit amount in BDT (positive number)."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Optional note or transaction memo."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Public transparency flag."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when deposit was recorded."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["depositId", "memberId", "date", "amount", "note", "isPublic", "createdAt", "updatedAt"]
+    },
+    "DrawRecord": {
+      "title": "DrawRecord",
+      "description": "Lottery / draw payout recipient entry.",
+      "type": "object",
+      "properties": {
+        "drawId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Unique draw entry identifier."
+        },
+        "memberId": {
+          "type": "number",
+          "description": "Winning member serial ID."
+        },
+        "memberName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Winning member display name."
+        },
+        "date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "Draw date in YYYY-MM-DD format."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Payout amount in BDT."
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Draw note."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Public transparency flag."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["drawId", "memberId", "memberName", "date", "amount", "note", "isPublic", "createdAt", "updatedAt"]
+    },
+    "RuleItem": {
+      "title": "RuleItem",
+      "description": "Organization rule and regulation entry.",
+      "type": "object",
+      "properties": {
+        "ruleId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Unique rule identifier."
+        },
+        "order": {
+          "type": "number",
+          "description": "Display order index."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "description": "Short rule title."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "description": "Detailed rule text."
+        },
+        "isPublic": {
+          "type": "boolean",
+          "description": "Public transparency flag."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["ruleId", "order", "title", "description", "isPublic", "createdAt", "updatedAt"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized admin user record keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID."
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Verified Google account email."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"],
+          "description": "Role designation."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["uid", "email", "role", "createdAt", "updatedAt"]
+    },
+    "AdminSecret": {
+      "title": "AdminSecret",
+      "description": "Admin-only passcode configuration strictly separated from member phone numbers.",
+      "type": "object",
+      "properties": {
+        "passcode": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 64,
+          "description": "Dedicated admin passcode (never allowed to match any member phone number)."
+        },
+        "updatedBy": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "Email of the admin who updated the passcode."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": ["passcode", "updatedBy", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/unityConfig/{configId}": {
+      "schema": { "$ref": "#/entities/UnityConfig" },
+      "description": "Global application settings, toggles, tickers, notices, popups, and changelog (doc ID: main)."
+    },
+    "/members/{memberId}": {
+      "schema": { "$ref": "#/entities/MemberPublic" },
+      "description": "Unlimited member public directory documents (keyed by numeric memberId string)."
+    },
+    "/memberContacts/{memberId}": {
+      "schema": { "$ref": "#/entities/MemberContact" },
+      "description": "Admin-only isolated member phone numbers (keyed by numeric memberId string)."
+    },
+    "/deposits/{depositId}": {
+      "schema": { "$ref": "#/entities/DepositRecord" },
+      "description": "Unlimited daily deposit ledger entries across all members."
+    },
+    "/draws/{drawId}": {
+      "schema": { "$ref": "#/entities/DrawRecord" },
+      "description": "Draw / lottery winner payout records."
+    },
+    "/rules/{ruleId}": {
+      "schema": { "$ref": "#/entities/RuleItem" },
+      "description": "Organization rules and regulations."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Trusted admin role registry."
+    },
+    "/adminSecrets/{secretId}": {
+      "schema": { "$ref": "#/entities/AdminSecret" },
+      "description": "Admin-only passcode configuration strictly separated from member contacts."
+    }
+  }
+}

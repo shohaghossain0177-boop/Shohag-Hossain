@@ -1,0 +1,3655 @@
+<!DOCTYPE html>
+<html lang="bn"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BARAKAH UNITY">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0f766e">
+  <title>BARAKAH MULTICARE HOSPITAL UNITY</title>
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #ccfbf1;
+      --accent: #0284c7;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #d97706;
+      --shadow: 0 2px 8px rgba(15, 23, 42, 0.07);
+    }
+
+    body.dark-mode {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: #334155;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      font-family: 'Noto Sans Bengali', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overscroll-behavior-y: contain;
+    }
+
+    body {
+      padding-bottom: calc(86px + env(safe-area-inset-bottom));
+    }
+
+    .app-container {
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Pull-to-refresh Indicator */
+    .ptr-indicator {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100%);
+      width: 100%;
+      max-width: 600px;
+      background: #0f172a;
+      color: #fff;
+      text-align: center;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: calc(8px + env(safe-area-inset-top)) 12px 10px;
+      z-index: 200;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      opacity: 0;
+      border-bottom-left-radius: 14px;
+      border-bottom-right-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+      pointer-events: none;
+    }
+
+    .ptr-indicator.visible {
+      opacity: 1;
+    }
+
+    /* Main Header */
+    .main-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #0d9488 100%);
+      color: #ffffff;
+      padding: calc(18px + env(safe-area-inset-top)) 16px 18px;
+      text-align: center;
+      border-bottom-left-radius: 22px;
+      border-bottom-right-radius: 22px;
+      box-shadow: 0 4px 16px rgba(15, 118, 110, 0.28);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .main-header h1 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .admin-credit-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #f0fdfa;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.32);
+      padding: 4px 14px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* Status Bar */
+    .status-strip {
+      margin: 12px 14px 0;
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .status-viewer {
+      background: #e2e8f0;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    body.dark-mode .status-viewer {
+      background: #1e293b;
+      color: #cbd5e1;
+      border-color: #334155;
+    }
+
+    .status-admin {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .mini-pill-btn {
+      border: none;
+      border-radius: 99px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mini-pill-login { background: #1e293b; color: #fff; }
+    .mini-pill-logout { background: #dc2626; color: #fff; }
+
+    /* Always Running Marquee Bar */
+    .ticker-wrap {
+      margin: 10px 14px 2px;
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 8px 0;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(15, 118, 110, 0.22);
+      display: flex;
+      align-items: center;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .ticker-wrap.bkash-ticker {
+      margin: 0 0 12px;
+      background: linear-gradient(90deg, #be185d, #e2136e);
+      box-shadow: 0 3px 10px rgba(226, 19, 110, 0.26);
+    }
+
+    .ticker-badge {
+      background: rgba(0, 0, 0, 0.25);
+      color: #fde047;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 0 99px 99px 0;
+      z-index: 2;
+      flex-shrink: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .ticker-track-box {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .ticker-track {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      font-size: 13px;
+      font-weight: 700;
+      animation: marqueeScroll 20s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Notice / AI Feature Banners */
+    .ai-notice-banner {
+      margin: 10px 14px 0;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #78350f;
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+      padding: 10px 13px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.45;
+      box-shadow: var(--shadow);
+    }
+
+    /* Sub-page Header */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, #0d9488 100%);
+      color: #fff;
+      padding: calc(14px + env(safe-area-inset-top)) 14px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      padding: 8px 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .back-btn:active { transform: scale(0.96); }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 700;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Toggles Grid */
+    .toggles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px 14px 8px;
+    }
+
+    .toggle-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 12px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.12s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 82px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toggle-card:active { transform: scale(0.97); }
+
+    .toggle-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .toggle-1::before { background: var(--primary); }
+    .toggle-2::before { background: #d97706; }
+    .toggle-3::before { background: #0284c7; }
+    .toggle-4::before { background: #7c3aed; }
+    .toggle-5 {
+      grid-column: 1 / -1;
+      min-height: 70px;
+      flex-direction: row;
+      align-items: center;
+      background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 100%);
+      border-color: #fbcfe8;
+    }
+    body.dark-mode .toggle-5 {
+      background: linear-gradient(135deg, #3b0764 0%, #1e293b 100%);
+      border-color: #831843;
+    }
+    .toggle-5::before { background: #e2136e; width: 5px; }
+
+    .toggle-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .toggle-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .toggle-1 .toggle-value { color: var(--primary); }
+    .toggle-2 .toggle-value { color: #b45309; }
+    .toggle-3 .toggle-value { color: #0369a1; }
+    .toggle-4 .toggle-value { color: #6d28d9; font-size: 14px; }
+    .toggle-5 .toggle-value { color: #e2136e; font-size: 14.5px; }
+
+    /* Payment Cards */
+    .payment-option-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.15s ease;
+    }
+
+    .payment-option-card:active { transform: scale(0.985); }
+    .payment-option-card.active-nagad {
+      border-color: var(--primary);
+      background: #f0fdfa;
+    }
+    .payment-option-card.active-bkash {
+      border-color: #e2136e;
+      background: #fdf2f8;
+    }
+    body.dark-mode .payment-option-card.active-nagad { background: #134e4a; }
+    body.dark-mode .payment-option-card.active-bkash { background: #500724; }
+
+    .bkash-box {
+      background: linear-gradient(135deg, #fff1f2 0%, #fce7f3 100%);
+      border: 2px solid #f472b6;
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(226, 19, 110, 0.14);
+    }
+    body.dark-mode .bkash-box {
+      background: linear-gradient(135deg, #4c0519 0%, #1e293b 100%);
+      border-color: #db2777;
+    }
+
+    .bkash-number-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #ffffff;
+      color: #be185d;
+      border: 2px dashed #e2136e;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      margin: 12px 0;
+      user-select: all;
+      -webkit-user-select: all;
+    }
+
+    /* Search & Section Header */
+    .section-bar {
+      padding: 10px 14px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .section-bar h2 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .search-box {
+      padding: 0 14px 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .search-input:focus { border-color: var(--primary); }
+
+    /* Member List */
+    .member-list {
+      padding: 0 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .member-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .member-card:active {
+      transform: scale(0.985);
+      opacity: 0.92;
+    }
+
+    .serial-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 800;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .member-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .member-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-phone {
+      font-size: 12.5px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .member-stats {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .member-amount {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .member-kisti {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Bottom Navigation */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 600px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      z-index: 40;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .bottom-btn {
+      padding: 12px 10px;
+      border-radius: 12px;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      -webkit-appearance: none;
+    }
+
+    .bottom-btn:active { transform: scale(0.97); }
+
+    .btn-backup {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .btn-admin {
+      background: #1e293b;
+      color: #ffffff;
+    }
+
+    /* Cards & Forms */
+    .content-pad {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background: var(--card);
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 11px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      -webkit-appearance: none;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-success { background: var(--success); color: #fff; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-warning { background: #d97706; color: #fff; }
+    .btn-pink { background: #e2136e; color: #fff; }
+    .btn-danger { background: #fee2e2; color: var(--danger); }
+    .btn-outline { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 12px;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 11px;
+    }
+
+    .mode-tab {
+      padding: 8px 6px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .mode-tab.active {
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .range-preview {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: #115e59;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .readonly-notice {
+      background: var(--card);
+      border: 1px dashed var(--muted);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 12.5px;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12.5px;
+    }
+
+    .text-right { text-align: right; }
+
+    .total-box {
+      background: linear-gradient(135deg, var(--primary), #0d9488);
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-box .lbl { font-size: 12.5px; opacity: 0.92; }
+    .total-box .val { font-size: 22px; font-weight: 800; }
+
+    .tfoot-row td {
+      background: #ecfdf5;
+      font-weight: 800;
+      color: #065f46;
+      font-size: 14px;
+      border-top: 2px solid #10b981;
+    }
+    body.dark-mode .tfoot-row td {
+      background: #064e3b;
+      color: #a7f3d0;
+    }
+
+    .del-mini-btn {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Summary Grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-box .s-lbl {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-box .s-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* Code Editor in Admin */
+    .code-textarea {
+      width: 100%;
+      min-height: 240px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      background: #0f172a;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      outline: none;
+      resize: vertical;
+    }
+
+    .admin-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      padding: 9px 4px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .tab-btn.active {
+      background: #1e293b;
+      color: #fff;
+      border-color: #1e293b;
+    }
+
+    .tab-btn.ai-tab.active {
+      background: linear-gradient(135deg, #6d28d9, #4f46e5);
+      border-color: #6d28d9;
+      color: #fff;
+    }
+
+    /* AI Assistant Styles */
+    .ai-header-card {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 14px 15px;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.25);
+    }
+
+    .ai-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .ai-chip {
+      background: rgba(124, 58, 237, 0.1);
+      color: #6d28d9;
+      border: 1px solid rgba(124, 58, 237, 0.28);
+      border-radius: 99px;
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    body.dark-mode .ai-chip {
+      background: rgba(167, 139, 250, 0.16);
+      color: #c4b5fd;
+    }
+
+    .ai-chat-box {
+      max-height: 230px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .ai-msg {
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      max-width: 92%;
+    }
+
+    .ai-msg-user {
+      align-self: flex-end;
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ai-msg-bot {
+      align-self: flex-start;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .bulk-member-list {
+      max-height: 240px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 10px;
+      background: var(--bg);
+      margin-bottom: 12px;
+    }
+
+    .bulk-member-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .bulk-member-item:last-child { border-bottom: none; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: calc(74px + env(safe-area-inset-top));
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 220;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      display: none;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 150;
+    }
+
+    .modal-box {
+      background: var(--card);
+      color: var(--text);
+      width: 100%;
+      max-width: 380px;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13.5px;
+      padding: 20px 10px;
+    }
+  </style>
+  <style id="ai-custom-css"></style>
+</head>
+<body>
+
+  <div id="ptr-indicator" class="ptr-indicator">⬇️ টানুন বর্তমান পেজ আপডেট করতে...</div>
+
+  <!-- ডিফল্ট ডেটাবেজ (এডমিন ও এআই-এর সব আপডেট এখানে সংরক্ষিত হয়) -->
+  <script id="default-db" type="application/json">
+  {
+  "adminName": "Shohag Hossain",
+  "adminPin": "@Shohag007",
+  "cloudSyncUrl": "",
+  "updatedAtMs": 1795374000000,
+  "lastBackup": "২৩/১১/২০২৬, ৯:৩০:০০ AM",
+  "appConfig": {
+    "homeTickerText": "সম্মানিত সদস্যগনকে নিজ উদ্যোগে ডেইলি ডিপোজিট জমাদানের জন্য আহবান জানানো হচ্ছে।",
+    "bkashTickerText": "দয়া করে সর্বনিম্ন ৫টি ডিপোজিট ও খরচ সহ বিকাশ করুন",
+    "bkashNumber": "01303768168",
+    "adminPhone": "01607703566",
+    "themeColor": "#0f766e",
+    "darkMode": false,
+    "noticeBanner": "",
+    "showLeaderboard": false,
+    "fundTarget": 0,
+    "sortBy": "id",
+    "customCss": "",
+    "customWidgets": [],
+    "aiApiKey": "",
+    "aiProvider": "gemini",
+    "aiLogs": []
+  },
+  "members": [
+    {
+      "id": 1,
+      "name": "সোহেল মাহমুদ",
+      "phone": "01765422160",
+      "deposits": [
+        {
+          "id": "d_1795373485880_183",
+          "date": "2026-11-22",
+          "amount": 300,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "সোহেল রানা",
+      "phone": "01735889440",
+      "deposits": []
+    },
+    {
+      "id": 3,
+      "name": "নিজাম উদ্দিন",
+      "phone": "01740850588",
+      "deposits": []
+    },
+    {
+      "id": 4,
+      "name": "মো রুবেল",
+      "phone": "01879741840",
+      "deposits": []
+    },
+    {
+      "id": 5,
+      "name": "মো রুবেল(২)",
+      "phone": "01879741840",
+      "deposits": []
+    },
+    {
+      "id": 6,
+      "name": "মো রুবেল(৩)",
+      "phone": "01879741840",
+      "deposits": []
+    },
+    {
+      "id": 7,
+      "name": "মো রুবেল(৪)",
+      "phone": "01879741840",
+      "deposits": []
+    },
+    {
+      "id": 8,
+      "name": "মো রুবেল(৫)",
+      "phone": "01879741840",
+      "deposits": []
+    },
+    {
+      "id": 9,
+      "name": "রাকিব হোসেন",
+      "phone": "01968669988",
+      "deposits": []
+    },
+    {
+      "id": 10,
+      "name": "ফাহাদ আলী",
+      "phone": "01777294571",
+      "deposits": []
+    },
+    {
+      "id": 11,
+      "name": "ফাহাদ আলী(২)",
+      "phone": "01777294571",
+      "deposits": []
+    },
+    {
+      "id": 12,
+      "name": "শরীফ মোল্লা",
+      "phone": "01812465555",
+      "deposits": []
+    },
+    {
+      "id": 13,
+      "name": "শরীফ মোল্লা(২)",
+      "phone": "01812465555",
+      "deposits": []
+    },
+    {
+      "id": 14,
+      "name": "এডমিন সোহাগ হোসেন",
+      "phone": "01607703566",
+      "deposits": []
+    },
+    {
+      "id": 15,
+      "name": "সোহাগ হোসেন(২)",
+      "phone": "01607703566",
+      "deposits": []
+    },
+    {
+      "id": 16,
+      "name": "মো নাহিদ",
+      "phone": "01610185995",
+      "deposits": []
+    },
+    {
+      "id": 17,
+      "name": "মো নাহিদ(২)",
+      "phone": "01610185995",
+      "deposits": []
+    },
+    {
+      "id": 18,
+      "name": "হৃদয়",
+      "phone": "01783789751",
+      "deposits": []
+    },
+    {
+      "id": 19,
+      "name": "ইয়াসিন",
+      "phone": "01337679138",
+      "deposits": []
+    },
+    {
+      "id": 20,
+      "name": "ইয়াসিন(২)",
+      "phone": "01337679138",
+      "deposits": []
+    },
+    {
+      "id": 21,
+      "name": "শাকিব হোসেন",
+      "phone": "01829841743",
+      "deposits": []
+    },
+    {
+      "id": 22,
+      "name": "নাহিদ(ব্রাদার)",
+      "phone": "01748807548",
+      "deposits": []
+    },
+    {
+      "id": 23,
+      "name": "জোবায়ের",
+      "phone": "01784351518",
+      "deposits": []
+    },
+    {
+      "id": 24,
+      "name": "সৈকত",
+      "phone": "01981212533",
+      "deposits": []
+    },
+    {
+      "id": 25,
+      "name": "নাইম",
+      "phone": "01764870180",
+      "deposits": [
+        {
+          "id": "d_1795373303501_102",
+          "date": "2026-11-22",
+          "amount": 100,
+          "note": "দৈনিক কিস্তি"
+        },
+        {
+          "id": "d_1795373308237_469",
+          "date": "2026-11-23",
+          "amount": 100,
+          "note": "দৈনিক কিস্তি"
+        },
+        {
+          "id": "d_1795373312558_783",
+          "date": "2026-11-24",
+          "amount": 100,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "name": "নাইম(২)",
+      "phone": "01764870180",
+      "deposits": []
+    },
+    {
+      "id": 27,
+      "name": "মামুন",
+      "phone": "01312039890",
+      "deposits": [
+        {
+          "id": "d_1795373266460_348",
+          "date": "2026-11-22",
+          "amount": 100,
+          "note": "দৈনিক কিস্তি"
+        },
+        {
+          "id": "d_1795373271997_861",
+          "date": "2026-11-23",
+          "amount": 100,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "আরমান",
+      "phone": "01860673908",
+      "deposits": []
+    },
+    {
+      "id": 29,
+      "name": "ফারুক",
+      "phone": "01814445759",
+      "deposits": []
+    },
+    {
+      "id": 30,
+      "name": "মো রনি",
+      "phone": "01721267313",
+      "deposits": [
+        {
+          "id": "d_1795373374538_274",
+          "date": "2026-11-22",
+          "amount": 1000,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "ইয়াসিন আরাফাত ইমন",
+      "phone": "01758888046",
+      "deposits": [
+        {
+          "id": "d_1795373418667_875",
+          "date": "2026-11-23",
+          "amount": 300,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "ফিরোজ",
+      "phone": "01859692423",
+      "deposits": []
+    },
+    {
+      "id": 33,
+      "name": "সোহেল মাহমুদ(২)",
+      "phone": "01765422160",
+      "deposits": [
+        {
+          "id": "d_1795373521318_241",
+          "date": "2026-11-22",
+          "amount": 300,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "name": "মো: মোহন",
+      "phone": "01859759431",
+      "deposits": []
+    },
+    {
+      "id": 35,
+      "name": "সোহেল মাহমুদ(৩)",
+      "phone": "01765422160",
+      "deposits": [
+        {
+          "id": "d_1795373601441_671",
+          "date": "2026-11-22",
+          "amount": 300,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "সোহেল মাহমুদ(৪)",
+      "phone": "01765422160",
+      "deposits": [
+        {
+          "id": "d_1795373642609_939",
+          "date": "2026-11-22",
+          "amount": 300,
+          "note": "দৈনিক কিস্তি"
+        }
+      ]
+    }
+  ],
+  "draws": []
+}
+  </script>
+
+  <div class="app-container" id="app-root"></div>
+
+  <div class="bottom-bar" id="bottom-bar"></div>
+
+  <!-- Admin Password Modal -->
+  <div class="modal-backdrop" id="admin-modal">
+    <div class="modal-box">
+      <h3 style="font-size:17px; font-weight:800; margin-bottom:6px;">🔐 এডমিন ভেরিফিকেশন</h3>
+      <p id="admin-gate-desc" style="font-size:13px; color:var(--muted); margin-bottom:14px;">
+        যেকোনো পরিবর্তনের ক্ষমতা শুধুমাত্র এডমিনের। প্রবেশ করতে এডমিন পিন দিন:
+      </p>
+      <div class="form-group">
+        <input type="password" id="admin-pin-input" class="form-control" placeholder="এডমিন পিন লিখুন" onkeydown="if(event.key==='Enter') verifyAdminPin()">
+      </div>
+      <div id="admin-pin-error" style="color:#dc2626; font-size:12.5px; font-weight:700; margin-bottom:10px; display:none;"></div>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="closeAdminGate()">বাতিল</button>
+        <button class="btn btn-primary" onclick="verifyAdminPin()">প্রবেশ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal-box">
+      <h3 style="font-size:16.5px; font-weight:800; margin-bottom:8px;">⚠️ নিশ্চিত করুন</h3>
+      <p id="confirm-modal-msg" style="font-size:13.5px; color:var(--text); margin-bottom:16px; line-height:1.5;"></p>
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="closeConfirmModal(false)">না</button>
+        <button class="btn btn-danger" onclick="closeConfirmModal(true)">হ্যাঁ, নিশ্চিত</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // মূল HTML শেল ক্যাপচার
+    const INITIAL_HTML_SHELL = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const STORAGE_KEY = 'barakah_multicare_unity_db_v2';
+    const VIEW_STATE_KEY = 'barakah_unity_current_view_v1';
+
+    let db = loadDatabase();
+    let currentView = loadInitialViewState();
+    let searchQuery = '';
+    let isAdminAuthenticated = false;
+    let pendingTargetAfterLogin = null;
+    let confirmCallback = null;
+    let aiUndoSnapshot = null;
+
+    function getDefaultAppConfig() {
+      return {
+        homeTickerText: 'সম্মানিত সদস্যগনকে নিজ উদ্যোগে ডেইলি ডিপোজিট জমাদানের জন্য আহবান জানানো হচ্ছে।',
+        bkashTickerText: 'দয়া করে সর্বনিম্ন ৫টি ডিপোজিট ও খরচ সহ বিকাশ করুন',
+        bkashNumber: '01303768168',
+        adminPhone: '01607703566',
+        themeColor: '#0f766e',
+        darkMode: false,
+        noticeBanner: '',
+        showLeaderboard: false,
+        fundTarget: 0,
+        sortBy: 'id',
+        customCss: '',
+        customWidgets: [],
+        aiApiKey: '',
+        aiProvider: 'gemini',
+        aiLogs: []
+      };
+    }
+
+    function ensureDbStructure(targetDb, defDb) {
+      targetDb.appConfig = Object.assign(getDefaultAppConfig(), targetDb.appConfig || {});
+      if (!Array.isArray(targetDb.appConfig.customWidgets)) targetDb.appConfig.customWidgets = [];
+      if (!Array.isArray(targetDb.appConfig.aiLogs)) targetDb.appConfig.aiLogs = [];
+      // ১৪ নং সদস্যের নামের সামনে "এডমিন " নিশ্চিত করা
+      if (Array.isArray(targetDb.members)) {
+        targetDb.members.forEach(m => {
+          if (m.phone === '01607703566' && m.name.trim() === 'সোহাগ হোসেন') {
+            m.name = 'এডমিন সোহাগ হোসেন';
+          }
+        });
+      }
+      if (!targetDb.appConfig.homeTickerText && defDb?.appConfig?.homeTickerText) {
+        targetDb.appConfig.homeTickerText = defDb.appConfig.homeTickerText;
+      }
+      return targetDb;
+    }
+
+    function loadDatabase() {
+      const defEl = document.getElementById('default-db');
+      const defDb = ensureDbStructure(JSON.parse(defEl.textContent));
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.members)) {
+            if (Number(defDb.updatedAtMs || 0) > Number(parsed.updatedAtMs || 0)) {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(defDb));
+              setTimeout(() => showToast('নতুন আপডেট অটো লোড হয়েছে!'), 400);
+              return defDb;
+            }
+            return ensureDbStructure(parsed, defDb);
+          }
+        }
+      } catch (e) {}
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defDb));
+      return defDb;
+    }
+
+    function loadInitialViewState() {
+      const fallback = {
+        page: 'home',
+        memberId: null,
+        adminTab: 'ai',
+        depositMode: 'single',
+        paymentMethod: null
+      };
+      try {
+        const raw = sessionStorage.getItem(VIEW_STATE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.page) {
+            // অ্যাডমিন অথেনটিকেশন না থাকলে অ্যাডমিন/অ্যাড মেম্বার পেজ থেকে সেফলি হোমে নেবে, বাকি সব পেজ ঠিক রাখবে
+            if (parsed.page === 'admin' || parsed.page === 'addMember') {
+              return fallback;
+            }
+            return Object.assign(fallback, parsed);
+          }
+        }
+      } catch (e) {}
+      return fallback;
+    }
+
+    function persistViewState() {
+      try {
+        sessionStorage.setItem(VIEW_STATE_KEY, JSON.stringify(currentView));
+      } catch (e) {}
+    }
+
+    function applyDynamicThemeAndCss() {
+      const cfg = db.appConfig || getDefaultAppConfig();
+      const root = document.documentElement;
+      const color = cfg.themeColor || '#0f766e';
+      root.style.setProperty('--primary', color);
+      document.body.classList.toggle('dark-mode', Boolean(cfg.darkMode));
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', color);
+
+      const styleEl = document.getElementById('ai-custom-css');
+      if (styleEl) styleEl.textContent = cfg.customCss || '';
+    }
+
+    function saveDatabase(skipCloudPush = false) {
+      db.updatedAtMs = Date.now();
+      db.lastBackup = new Date().toLocaleString('bn-BD');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      applyDynamicThemeAndCss();
+      if (!skipCloudPush && db.cloudSyncUrl && isAdminAuthenticated) {
+        pushToCloud(true);
+      }
+    }
+
+    // ঐচ্ছিক ক্লাউড অটো-সিঙ্ক
+    async function syncFromCloud(silent = true) {
+      if (!db.cloudSyncUrl) {
+        if (!silent) showToast('বর্তমান পেজটি লোকাল ডেটা থেকে আপডেট হয়েছে');
+        return false;
+      }
+      try {
+        const url = db.cloudSyncUrl.trim();
+        const sep = url.includes('?') ? '&' : '?';
+        const res = await fetch(`${url}${sep}_t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('Network error');
+        const remote = await res.json();
+        if (remote && Array.isArray(remote.members)) {
+          if (Number(remote.updatedAtMs || 0) > Number(db.updatedAtMs || 0)) {
+            const keepUrl = db.cloudSyncUrl;
+            db = ensureDbStructure(remote);
+            if (!db.cloudSyncUrl) db.cloudSyncUrl = keepUrl;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+            applyDynamicThemeAndCss();
+            render();
+            showToast('নতুন তথ্য অটো আপডেট হয়েছে!');
+            return true;
+          } else if (!silent) {
+            showToast('সব তথ্য ইতিমধ্যেই আপডেটেড আছে');
+          }
+        }
+      } catch (e) {
+        if (!silent) showToast('সার্ভার থেকে আপডেট চেক করা যায়নি');
+      }
+      return false;
+    }
+
+    async function pushToCloud(silent = true) {
+      if (!db.cloudSyncUrl || !isAdminAuthenticated) return false;
+      try {
+        const res = await fetch(db.cloudSyncUrl.trim(), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(db)
+        });
+        if (!res.ok) throw new Error('Push failed');
+        if (!silent) showToast('ক্লাউডে ডেটা সফলভাবে আপডেট হয়েছে!');
+        return true;
+      } catch (e) {
+        if (!silent) showToast('ক্লাউডে পাঠানো যায়নি, ফোনে সেভ আছে');
+        return false;
+      }
+    }
+
+    function requireAdmin() {
+      if (isAdminAuthenticated) return true;
+      showToast('শুধুমাত্র এডমিন পরিবর্তন করতে পারবেন!');
+      openAdminGate();
+      return false;
+    }
+
+    function toBn(num) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      return String(num).replace(/\d/g, d => bnDigits[d]);
+    }
+
+    function toEnDigits(str) {
+      const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+      return String(str || '').replace(/[০-৯]/g, d => bnDigits.indexOf(d));
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function getTodayISO() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatDateBn(iso) {
+      if (!iso) return '-';
+      const parts = iso.split('-');
+      if (parts.length !== 3) return iso;
+      return `${toBn(parts[2])}/${toBn(parts[1])}/${toBn(parts[0])}`;
+    }
+
+    function getDatesInRange(startISO, endISO) {
+      if (!startISO || !endISO || startISO > endISO) return [];
+      const dates = [];
+      const [sy, sm, sd] = startISO.split('-').map(Number);
+      const [ey, em, ed] = endISO.split('-').map(Number);
+      const current = new Date(Date.UTC(sy, sm - 1, sd));
+      const end = new Date(Date.UTC(ey, em - 1, ed));
+      let guard = 0;
+      while (current <= end && guard < 366) {
+        const cy = current.getUTCFullYear();
+        const cm = String(current.getUTCMonth() + 1).padStart(2, '0');
+        const cd = String(current.getUTCDate()).padStart(2, '0');
+        dates.push(`${cy}-${cm}-${cd}`);
+        current.setUTCDate(current.getUTCDate() + 1);
+        guard++;
+      }
+      return dates;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        t.style.display = 'none';
+      }, 2800);
+    }
+
+    function askConfirm(message, callback) {
+      confirmCallback = callback;
+      document.getElementById('confirm-modal-msg').textContent = message;
+      document.getElementById('confirm-modal').style.display = 'flex';
+    }
+
+    function closeConfirmModal(confirmed) {
+      document.getElementById('confirm-modal').style.display = 'none';
+      const cb = confirmCallback;
+      confirmCallback = null;
+      if (confirmed && typeof cb === 'function') cb();
+    }
+
+    // হিসাব-নিকাশ
+    function getMemberTotal(member) {
+      return (member.deposits || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    }
+
+    function getMemberInstallments(member) {
+      const total = getMemberTotal(member);
+      const count = total / 100;
+      return Number.isInteger(count) ? count : Number(count.toFixed(2));
+    }
+
+    function getGlobalStats() {
+      let totalFund = 0;
+      let totalDepositsCount = 0;
+      db.members.forEach(m => {
+        totalFund += getMemberTotal(m);
+        totalDepositsCount += (m.deposits || []).length;
+      });
+      const totalKistiBy100 = totalFund / 100;
+      const totalKisti = Number.isInteger(totalKistiBy100) ? totalKistiBy100 : Number(totalKistiBy100.toFixed(2));
+      const totalDrawAmount = (db.draws || []).reduce((s, d) => s + Number(d.amount || 0), 0);
+      return {
+        totalFund,
+        totalKisti,
+        totalDepositsCount,
+        totalDrawCount: (db.draws || []).length,
+        totalDrawAmount,
+        netBalance: totalFund - totalDrawAmount
+      };
+    }
+
+    // নেভিগেশন
+    function navigate(page, memberId = null) {
+      if ((page === 'admin' || page === 'addMember') && !isAdminAuthenticated) {
+        openAdminGate(page);
+        return;
+      }
+      currentView.page = page;
+      currentView.memberId = memberId;
+      if (page !== 'payment') currentView.paymentMethod = null;
+      persistViewState();
+      window.scrollTo(0, 0);
+      render();
+    }
+
+    function goBack() {
+      navigate('home');
+    }
+
+    function adminLogout() {
+      isAdminAuthenticated = false;
+      if (currentView.page === 'admin' || currentView.page === 'addMember') {
+        currentView.page = 'home';
+      }
+      persistViewState();
+      showToast('এডমিন লগআউট হয়েছে (রিড-ওনলি মোড)');
+      render();
+    }
+
+    function renderBottomBar() {
+      const bar = document.getElementById('bottom-bar');
+      if (currentView.page === 'backup' || currentView.page === 'admin') {
+        bar.style.display = 'none';
+        return;
+      }
+      bar.style.display = 'grid';
+      if (isAdminAuthenticated) {
+        bar.innerHTML = `
+          <button class="bottom-btn btn-backup" onclick="handleBackupClick()">☁️ ব্যাকআপ</button>
+          <button class="bottom-btn btn-admin" onclick="navigate('admin')">⚙️ এডমিন প্যানেল</button>
+        `;
+      } else {
+        bar.innerHTML = `
+          <button class="bottom-btn btn-backup" onclick="handleBackupClick()">☁️ ব্যাকআপ ও আপডেট</button>
+          <button class="bottom-btn btn-admin" onclick="openAdminGate()">🔐 এডমিন লগইন</button>
+        `;
+      }
+    }
+
+    function render() {
+      applyDynamicThemeAndCss();
+      persistViewState();
+      const root = document.getElementById('app-root');
+      renderBottomBar();
+
+      if (currentView.page === 'home') root.innerHTML = renderHome();
+      else if (currentView.page === 'member') root.innerHTML = renderMemberDetail(currentView.memberId);
+      else if (currentView.page === 'kisti') root.innerHTML = renderKistiPage();
+      else if (currentView.page === 'draws') root.innerHTML = renderDrawsPage();
+      else if (currentView.page === 'fund') root.innerHTML = renderFundPage();
+      else if (currentView.page === 'payment') root.innerHTML = renderPaymentPage();
+      else if (currentView.page === 'addMember') root.innerHTML = renderAddMemberPage();
+      else if (currentView.page === 'backup') root.innerHTML = renderBackupPage();
+      else if (currentView.page === 'admin') root.innerHTML = renderAdminPage();
+    }
+
+    // Pull-Down (Pull to Refresh) — যেই পেজে আছে শুধুমাত্র সেই পেজই আপডেট করবে
+    (function initPullToRefresh() {
+      let startY = 0;
+      let pulling = false;
+      let currentDiff = 0;
+      const threshold = 72;
+
+      function getPtrEl() {
+        return document.getElementById('ptr-indicator');
+      }
+
+      document.addEventListener('touchstart', (e) => {
+        if (window.scrollY > 2) return;
+        if (e.target.closest('input, textarea, select, .modal-box, .bulk-member-list, .ai-chat-box, .table-wrap')) return;
+        startY = e.touches[0].clientY;
+        pulling = true;
+        currentDiff = 0;
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!pulling) return;
+        const diff = e.touches[0].clientY - startY;
+        if (diff <= 0 || window.scrollY > 2) {
+          currentDiff = 0;
+          const el = getPtrEl();
+          if (el) el.classList.remove('visible');
+          return;
+        }
+        currentDiff = Math.min(diff, 120);
+        if (currentDiff > 18) {
+          const el = getPtrEl();
+          if (el) {
+            el.classList.add('visible');
+            const progress = Math.min(currentDiff / threshold, 1);
+            el.style.transform = `translateX(-50%) translateY(${(progress - 1) * 100}%)`;
+            el.textContent = currentDiff >= threshold
+              ? '🔄 ছেড়ে দিন — শুধুমাত্র এই পেজটি আপডেট হবে'
+              : '⬇️ নিচে টানুন আপডেট করতে...';
+          }
+        }
+      }, { passive: true });
+
+      document.addEventListener('touchend', async () => {
+        if (!pulling) return;
+        pulling = false;
+        const el = getPtrEl();
+        if (currentDiff >= threshold) {
+          if (el) {
+            el.style.transform = 'translateX(-50%) translateY(0%)';
+            el.textContent = '🔄 বর্তমান পেজ আপডেট হচ্ছে...';
+          }
+          await refreshCurrentPageOnly();
+          setTimeout(() => {
+            if (el) {
+              el.classList.remove('visible');
+              el.style.transform = 'translateX(-50%) translateY(-100%)';
+            }
+          }, 450);
+        } else if (el) {
+          el.classList.remove('visible');
+          el.style.transform = 'translateX(-50%) translateY(-100%)';
+        }
+        currentDiff = 0;
+      }, { passive: true });
+    })();
+
+    async function refreshCurrentPageOnly() {
+      const keepScrollY = window.scrollY;
+      // localStorage থেকে লেটেস্ট স্টেট পড়া (হোমপেজে ফেরত না গিয়ে)
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.members)) {
+            db = ensureDbStructure(parsed);
+          }
+        }
+      } catch (e) {}
+
+      if (db.cloudSyncUrl) {
+        await syncFromCloud(true);
+      }
+      render();
+      window.scrollTo(0, keepScrollY);
+      showToast('✅ বর্তমান পেজটি আপডেট হয়েছে!');
+    }
+
+    // AI ফিচার রেন্ডার হেল্পার (হোমপেজে AI দ্বারা চালু করা নতুন ফিচারসমূহ)
+    function renderAiAddedHomeFeatures() {
+      const cfg = db.appConfig || getDefaultAppConfig();
+      const stats = getGlobalStats();
+      let html = '';
+
+      if (cfg.noticeBanner && cfg.noticeBanner.trim()) {
+        html += `<div class="ai-notice-banner">📢 ${escapeHtml(cfg.noticeBanner)}</div>`;
+      }
+
+      if (cfg.fundTarget && Number(cfg.fundTarget) > 0) {
+        const target = Number(cfg.fundTarget);
+        const pct = Math.min(100, Math.round((stats.totalFund / target) * 100));
+        html += `
+          <div style="padding: 10px 14px 0;">
+            <div class="card" style="padding:12px 14px;">
+              <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; margin-bottom:6px;">
+                <span>🎯 ফান্ড লক্ষ্যমাত্রা</span>
+                <span style="color:var(--primary);">৳ ${toBn(stats.totalFund)} / ৳ ${toBn(target)} (${toBn(pct)}%)</span>
+              </div>
+              <div style="height:10px; background:var(--bg); border-radius:99px; overflow:hidden; border:1px solid var(--border);">
+                <div style="height:100%; width:${pct}%; background:linear-gradient(90deg, var(--primary), #10b981); border-radius:99px;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (cfg.showLeaderboard) {
+        const top3 = [...db.members]
+          .map(m => ({ ...m, total: getMemberTotal(m) }))
+          .filter(m => m.total > 0)
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 3);
+        if (top3.length) {
+          html += `
+            <div style="padding: 10px 14px 0;">
+              <div class="card" style="padding:12px 14px;">
+                <div style="font-size:13.5px; font-weight:800; margin-bottom:8px;">🏅 শীর্ষ ডিপোজিটর (AI ফিচার)</div>
+                ${top3.map((m, i) => `
+                  <div onclick="navigate('member', ${m.id})" style="display:flex; justify-content:space-between; padding:5px 0; font-size:13px; border-bottom:1px solid var(--border); cursor:pointer;">
+                    <span>${i === 0 ? '🥇' : i === 1 ? '🥈' : '🥉'} ${escapeHtml(m.name)}</span>
+                    <strong style="color:var(--primary);">৳ ${toBn(m.total)}</strong>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (Array.isArray(cfg.customWidgets) && cfg.customWidgets.length) {
+        cfg.customWidgets.forEach(w => {
+          html += `
+            <div style="padding: 10px 14px 0;">
+              <div class="card" style="padding:12px 14px;">
+                <div style="font-size:13.5px; font-weight:800; margin-bottom:4px;">✨ ${escapeHtml(w.title || 'তথ্য')}</div>
+                <div style="font-size:12.5px; color:var(--muted); line-height:1.5;">${escapeHtml(w.body || '')}</div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      return html;
+    }
+
+    // ১. হোম পেজ
+    function renderHome() {
+      const cfg = db.appConfig || getDefaultAppConfig();
+      const stats = getGlobalStats();
+      const filteredMembers = filterMembers(searchQuery);
+
+      const statusBanner = isAdminAuthenticated
+        ? `
+          <div class="status-strip status-admin">
+            <span>🔓 এডমিন মোড • AI ও অটো-আপডেট চালু</span>
+            <button class="mini-pill-btn mini-pill-logout" onclick="adminLogout()">লগআউট</button>
+          </div>
+        `
+        : `
+          <div class="status-strip status-viewer">
+            <span>👁️ শুধুমাত্র দেখার মোড • আপডেট: ${escapeHtml(db.lastBackup || 'সর্বশেষ')}</span>
+            <button class="mini-pill-btn mini-pill-login" onclick="openAdminGate()">এডমিন</button>
+          </div>
+        `;
+
+      const adminQuickAction = isAdminAuthenticated
+        ? `
+          <div style="padding: 4px 14px 4px; display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <button class="btn btn-primary" style="min-height:40px; font-size:12.5px;" onclick="currentView.adminTab='bulk'; navigate('admin');">
+              📅 তারিখ রেঞ্জ আদায়
+            </button>
+            <button class="btn" style="min-height:40px; font-size:12.5px; background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff;" onclick="currentView.adminTab='ai'; navigate('admin');">
+              🤖 AI অ্যাসিস্ট্যান্ট
+            </button>
+          </div>
+        `
+        : '';
+
+      return `
+        <header class="main-header">
+          <h1>BARAKAH MULTICARE HOSPITAL UNITY</h1>
+          <div class="admin-credit-badge">Admin: ${escapeHtml(db.adminName || 'Shohag Hossain')}</div>
+        </header>
+
+        ${statusBanner}
+
+        <!-- অলওয়েজ রানিং বার (৪টি টুগলের উপরে) -->
+        <div class="ticker-wrap" aria-label="ঘোষণা">
+          <div class="ticker-badge">📢 বিজ্ঞপ্তি</div>
+          <div class="ticker-track-box">
+            <div class="ticker-track">${escapeHtml(cfg.homeTickerText || 'সম্মানিত সদস্যগনকে নিজ উদ্যোগে ডেইলি ডিপোজিট জমাদানের জন্য আহবান জানানো হচ্ছে।')}</div>
+          </div>
+        </div>
+
+        ${renderAiAddedHomeFeatures()}
+
+        <section class="toggles-grid">
+          <div class="toggle-card toggle-1" onclick="navigate('kisti')">
+            <div class="toggle-label">📌 মোট প্রদেয় কিস্তি</div>
+            <div class="toggle-value">${toBn(stats.totalKisti)} টি</div>
+          </div>
+
+          <div class="toggle-card toggle-2" onclick="navigate('draws')">
+            <div class="toggle-label">🏆 ড্র পাওয়া ব্যক্তি</div>
+            <div class="toggle-value">${toBn(stats.totalDrawCount)} জন</div>
+          </div>
+
+          <div class="toggle-card toggle-3" onclick="navigate('fund')">
+            <div class="toggle-label">💰 টোটাল ফান্ড</div>
+            <div class="toggle-value">৳ ${toBn(stats.totalFund)}</div>
+          </div>
+
+          <div class="toggle-card toggle-4" onclick="navigate('addMember')">
+            <div class="toggle-label">➕ নতুন সদস্য এড করা</div>
+            <div class="toggle-value">${isAdminAuthenticated ? '+ সদস্য যুক্ত করুন' : '🔒 শুধুমাত্র এডমিন'}</div>
+          </div>
+
+          <div class="toggle-card toggle-5" onclick="navigate('payment')">
+            <div>
+              <div class="toggle-label" style="margin-bottom:2px;">💳 পেমেন্ট</div>
+              <div class="toggle-value">নগদ (ডিরেক্ট) ও বিকাশ পার্সোনাল</div>
+            </div>
+            <div style="font-size:18px; color:#e2136e; font-weight:800;">➔</div>
+          </div>
+        </section>
+
+        ${adminQuickAction}
+
+        <div class="section-bar">
+          <h2>সদস্য তালিকা (${toBn(db.members.length)} জন)</h2>
+          <span style="font-size:12px; color:var(--muted);">হিসাব দেখতে নামে ক্লিক করুন</span>
+        </div>
+
+        <div class="search-box">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="নাম, আইডি বা মোবাইল নম্বর দিয়ে খুঁজুন..."
+            value="${escapeHtml(searchQuery)}"
+            oninput="searchQuery = this.value; updateMemberListOnly();"
+          />
+        </div>
+
+        <div class="member-list" id="member-list-container">
+          ${renderMemberCardsHtml(filteredMembers)}
+        </div>
+      `;
+    }
+
+    function filterMembers(qRaw) {
+      const cfg = db.appConfig || getDefaultAppConfig();
+      const q = toEnDigits((qRaw || '').trim()).toLowerCase();
+      let list = [...db.members];
+      if (cfg.sortBy === 'amount_desc') {
+        list.sort((a, b) => getMemberTotal(b) - getMemberTotal(a));
+      } else {
+        list.sort((a, b) => a.id - b.id);
+      }
+      if (!q) return list;
+      return list.filter(m =>
+        m.name.toLowerCase().includes(q) ||
+        toEnDigits(m.phone).includes(q) ||
+        String(m.id) === q
+      );
+    }
+
+    function renderMemberCardsHtml(list) {
+      if (!list.length) return `<div class="empty-msg">কোনো সদস্য পাওয়া যায়নি</div>`;
+      return list.map(m => {
+        const total = getMemberTotal(m);
+        const kisti = getMemberInstallments(m);
+        const isAdminMember = m.phone === '01607703566' && m.name.includes('এডমিন');
+        return `
+          <div class="member-card" onclick="navigate('member', ${m.id})" style="${isAdminMember ? 'border-color: var(--primary);' : ''}">
+            <div class="serial-badge">${toBn(m.id)}</div>
+            <div class="member-info">
+              <div class="member-name">${escapeHtml(m.name)}</div>
+              <div class="member-phone">📞 ${escapeHtml(m.phone)}</div>
+            </div>
+            <div class="member-stats">
+              <div class="member-amount">৳ ${toBn(total)}</div>
+              <div class="member-kisti">${toBn(kisti)} টি কিস্তি</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateMemberListOnly() {
+      const container = document.getElementById('member-list-container');
+      if (!container) return;
+      container.innerHTML = renderMemberCardsHtml(filterMembers(searchQuery));
+    }
+
+    // নতুন পেমেন্ট পেজ
+    function getBkashLogoSvg() {
+      return `
+        <svg width="110" height="44" viewBox="0 0 180 70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="bKash Logo">
+          <g transform="translate(8,6)">
+            <polygon points="28,4 48,20 34,34 18,22" fill="#E2136E"/>
+            <polygon points="18,22 34,34 22,52 6,36" fill="#C10C5B"/>
+            <polygon points="34,34 56,28 46,48 22,52" fill="#F04393"/>
+            <polygon points="48,20 62,14 56,28 34,34" fill="#9E0B4B"/>
+          </g>
+          <text x="76" y="45" fill="#E2136E" font-family="Arial, sans-serif" font-size="28" font-weight="900">bKash</text>
+        </svg>
+      `;
+    }
+
+    function selectPaymentMethod(method) {
+      currentView.paymentMethod = method;
+      persistViewState();
+      render();
+    }
+
+    function renderPaymentPage() {
+      const cfg = db.appConfig || getDefaultAppConfig();
+      const method = currentView.paymentMethod;
+      const bkashNo = cfg.bkashNumber || '01303768168';
+      const adminPhone = cfg.adminPhone || '01607703566';
+
+      let detailSection = '';
+      if (method === 'nagad') {
+        detailSection = `
+          <div class="card" style="border: 2px solid var(--primary);">
+            <div class="card-title">🤝 নগদ (ডিরেক্ট জমাদান)</div>
+            <p style="font-size:13.5px; color:var(--text); line-height:1.6; margin-bottom:12px;">
+              সরাসরি এডমিনের হাতে নগদ কিস্তি জমা দিন। টাকা জমা দেওয়ার সাথে সাথেই এডমিন আপনার নামে হিসাব আপডেট করে দেবেন।
+            </p>
+            <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px;">
+              <div style="font-size:12px; color:var(--muted);">এডমিন যোগাযোগ:</div>
+              <div style="font-size:16px; font-weight:800; margin:3px 0;">এডমিন সোহাগ হোসেন</div>
+              <div style="font-size:15px; font-weight:700; color:var(--primary);">📞 ${escapeHtml(adminPhone)}</div>
+            </div>
+            <div class="btn-row">
+              <a href="tel:${escapeHtml(adminPhone)}" class="btn btn-primary" style="text-decoration:none;">📞 কল করুন</a>
+              <button class="btn btn-outline" onclick="copyTextSafe('${escapeHtml(adminPhone)}', 'এডমিনের নাম্বার কপি হয়েছে!')">📋 নাম্বার কপি</button>
+            </div>
+          </div>
+        `;
+      } else if (method === 'bkash') {
+        detailSection = `
+          <div class="ticker-wrap bkash-ticker" aria-label="বিকাশ নির্দেশনা">
+            <div class="ticker-badge">⚠️ শর্ত</div>
+            <div class="ticker-track-box">
+              <div class="ticker-track">${escapeHtml(cfg.bkashTickerText || 'দয়া করে সর্বনিম্ন ৫টি ডিপোজিট ও খরচ সহ বিকাশ করুন')}</div>
+            </div>
+          </div>
+
+          <div class="bkash-box">
+            <div style="display:flex; justify-content:center; margin-bottom:4px;">
+              ${getBkashLogoSvg()}
+            </div>
+            <div style="font-size:13px; font-weight:700; color:#be185d;">বিকাশ - পার্সোনাল নাম্বার (Send Money)</div>
+
+            <div class="bkash-number-pill" onclick="copyTextSafe('${escapeHtml(bkashNo)}', 'বিকাশ নাম্বার ${escapeHtml(bkashNo)} কপি হয়েছে!')">
+              <span>${escapeHtml(bkashNo)}</span>
+            </div>
+
+            <button class="btn btn-pink" onclick="copyTextSafe('${escapeHtml(bkashNo)}', 'বিকাশ নাম্বার ${escapeHtml(bkashNo)} কপি হয়েছে!')">
+              📋 নাম্বার কপি করুন (${escapeHtml(bkashNo)})
+            </button>
+
+            <p style="font-size:12.5px; color:#831843; font-weight:600; margin-top:12px; line-height:1.5;">
+              নাম্বারটি কপি করে বিকাশ অ্যাপ থেকে <b>Send Money</b> করুন এবং রেফারেন্সে আপনার নাম/আইডি লিখুন।
+            </p>
+          </div>
+        `;
+      } else {
+        detailSection = `
+          <div class="readonly-notice">
+            👆 পেমেন্ট করতে উপরের যেকোনো একটি মাধ্যম (<b>নগদ</b> বা <b>বিকাশ -পার্সোনাল</b>) নির্বাচন করুন।
+          </div>
+        `;
+      }
+
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">💳 পেমেন্ট</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="payment-option-card ${method === 'nagad' ? 'active-nagad' : ''}" onclick="selectPaymentMethod('nagad')">
+            <div>
+              <div style="font-size:16px; font-weight:800; color:var(--primary);">💵 নগদ(ডিরেক্ট জমাদান)</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">সরাসরি এডমিনের নিকট হাতে হাতে জমা দিন</div>
+            </div>
+            <div style="font-size:18px; font-weight:800;">➔</div>
+          </div>
+
+          <div class="payment-option-card ${method === 'bkash' ? 'active-bkash' : ''}" onclick="selectPaymentMethod('bkash')">
+            <div>
+              <div style="font-size:16px; font-weight:800; color:#e2136e;">📱 বিকাশ -পার্সোনাল</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:2px;">বিকাশ নাম্বার কপি করে ডিপোজিট পাঠান</div>
+            </div>
+            <div style="font-size:18px; font-weight:800; color:#e2136e;">➔</div>
+          </div>
+
+          ${detailSection}
+        </div>
+      `;
+    }
+
+    // ২. সদস্যের ব্যক্তিগত হিসাব পেজ
+    function renderMemberDetail(memberId) {
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return `<div class="content-pad"><button class="btn btn-primary" onclick="goBack()">ব্যাক করুন</button></div>`;
+
+      const total = getMemberTotal(member);
+      const kisti = getMemberInstallments(member);
+      const deposits = [...(member.deposits || [])].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+      const rowsHtml = deposits.length
+        ? deposits.map(dep => `
+            <tr>
+              <td>${formatDateBn(dep.date)}</td>
+              <td>${escapeHtml(dep.note || 'দৈনিক কিস্তি')}</td>
+              <td class="text-right" style="font-weight:700; color:var(--primary);">৳ ${toBn(dep.amount)}</td>
+              ${isAdminAuthenticated ? `
+                <td class="text-right">
+                  <button class="del-mini-btn" onclick="deleteDeposit(${member.id}, '${dep.id}')">মুছুন</button>
+                </td>
+              ` : ''}
+            </tr>
+          `).join('')
+        : `<tr><td colspan="${isAdminAuthenticated ? 4 : 3}" class="empty-msg">এখনো কোনো টাকা জমা দেওয়া হয়নি</td></tr>`;
+
+      const adminDepositSection = isAdminAuthenticated
+        ? `
+          <div class="card">
+            <div class="card-title">
+              <span>💵 ডিপোজিট আদায় (এডমিন)</span>
+              <span style="font-size:11.5px; color:var(--primary); font-weight:600;">অটো আপডেট চালু</span>
+            </div>
+
+            <div class="mode-tabs">
+              <button class="mode-tab ${currentView.depositMode === 'single' ? 'active' : ''}" onclick="switchDepositMode('single')">
+                একদিনের জমা
+              </button>
+              <button class="mode-tab ${currentView.depositMode === 'range' ? 'active' : ''}" onclick="switchDepositMode('range')">
+                তারিখ রেঞ্জ (যেমন: ২২-২৯)
+              </button>
+            </div>
+
+            ${currentView.depositMode === 'single' ? `
+              <div class="form-group">
+                <label>তারিখ নির্বাচন করুন</label>
+                <input type="date" id="dep-date" class="form-control" value="${getTodayISO()}" />
+              </div>
+              <div class="form-group">
+                <label>টাকার পরিমাণ</label>
+                <input type="number" id="dep-amount" class="form-control" value="100" min="1" inputmode="numeric" />
+              </div>
+              <div class="form-group">
+                <label>মন্তব্য (ঐচ্ছিক)</label>
+                <input type="text" id="dep-note" class="form-control" placeholder="যেমন: দৈনিক কিস্তি" />
+              </div>
+              <button class="btn btn-primary" onclick="addDeposit(${member.id})">✅ টাকা জমা করুন</button>
+            ` : `
+              <div class="btn-row">
+                <div class="form-group">
+                  <label>শুরুর তারিখ</label>
+                  <input type="date" id="dep-range-start" class="form-control" value="2026-11-22" oninput="updateRangePreview()" />
+                </div>
+                <div class="form-group">
+                  <label>শেষ তারিখ</label>
+                  <input type="date" id="dep-range-end" class="form-control" value="2026-11-29" oninput="updateRangePreview()" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>প্রতিদিনের টাকার পরিমাণ</label>
+                <input type="number" id="dep-range-amount" class="form-control" value="100" min="1" inputmode="numeric" oninput="updateRangePreview()" />
+              </div>
+              <div class="form-group">
+                <label>মন্তব্য (ঐচ্ছিক)</label>
+                <input type="text" id="dep-range-note" class="form-control" placeholder="যেমন: দৈনিক কিস্তি" />
+              </div>
+              <label class="checkbox-row">
+                <input type="checkbox" id="dep-range-skip-dup" checked />
+                <span>আগে জমা থাকা তারিখ বাদ দিন (ডুপ্লিকেট এড়াতে)</span>
+              </label>
+              <div class="range-preview" id="range-preview-box">
+                ${buildRangePreviewText('2026-11-22', '2026-11-29', 100)}
+              </div>
+              <button class="btn btn-primary" onclick="addRangeDeposit(${member.id})">✅ রেঞ্জ অনুযায়ী ডিপোজিট আদায় করুন</button>
+            `}
+          </div>
+        `
+        : `
+          <div class="readonly-notice">
+            🔒 ডিপোজিট আদায় ও পরিবর্তনের ক্ষমতা শুধুমাত্র এডমিনের। আপনি শুধুমাত্র হিসাব দেখতে পারবেন।
+          </div>
+        `;
+
+      const adminMemberTools = isAdminAuthenticated
+        ? `
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn btn-outline" style="min-height:38px; font-size:12.5px;" onclick="openEditMemberPrompt(${member.id})">✏️ তথ্য এডিট</button>
+            <button class="btn btn-danger" style="min-height:38px; font-size:12.5px;" onclick="deleteMember(${member.id})">🗑️ সদস্য মুছুন</button>
+          </div>
+        `
+        : '';
+
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">${toBn(member.id)}. ${escapeHtml(member.name)}</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div>
+                <div style="font-size:17px; font-weight:800;">${escapeHtml(member.name)}</div>
+                <a href="tel:${escapeHtml(member.phone)}" style="font-size:13.5px; color:#0284c7; text-decoration:none; font-weight:600;">
+                  📞 ${escapeHtml(member.phone)}
+                </a>
+              </div>
+              <div style="background:#ccfbf1; color:#115e59; padding:5px 10px; border-radius:99px; font-size:12px; font-weight:700;">
+                আইডি #${toBn(member.id)}
+              </div>
+            </div>
+
+            <div class="total-box">
+              <div>
+                <div class="lbl">মোট জমা দিয়েছেন (টোটাল)</div>
+                <div class="val">৳ ${toBn(total)}</div>
+              </div>
+              <div style="text-align:right;">
+                <div class="lbl">মোট কিস্তি</div>
+                <div style="font-size:18px; font-weight:800;">${toBn(kisti)} টি</div>
+              </div>
+            </div>
+
+            ${adminMemberTools}
+          </div>
+
+          ${adminDepositSection}
+
+          <div class="card">
+            <div class="card-title">📅 তারিখ অনুসারে হিসাব</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>তারিখ</th>
+                    <th>বিবরণ</th>
+                    <th class="text-right">টাকা</th>
+                    ${isAdminAuthenticated ? '<th class="text-right">অ্যাকশন</th>' : ''}
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+                <tfoot>
+                  <tr class="tfoot-row">
+                    <td colspan="2">টোটাল জমা (${toBn(deposits.length)} বার)</td>
+                    <td class="text-right">৳ ${toBn(total)}</td>
+                    ${isAdminAuthenticated ? '<td></td>' : ''}
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchDepositMode(mode) {
+      currentView.depositMode = mode;
+      persistViewState();
+      render();
+    }
+
+    function buildRangePreviewText(startISO, endISO, amt) {
+      const dates = getDatesInRange(startISO, endISO);
+      if (!dates.length) return '⚠️ সঠিক শুরুর ও শেষ তারিখ নির্বাচন করুন';
+      const total = dates.length * Number(amt || 0);
+      return `📅 ${formatDateBn(startISO)} থেকে ${formatDateBn(endISO)} পর্যন্ত<br>মোট দিন: <b>${toBn(dates.length)} দিন</b> • প্রতিদিন ৳ ${toBn(amt || 0)} = মোট <b>৳ ${toBn(total)}</b>`;
+    }
+
+    function updateRangePreview() {
+      const s = document.getElementById('dep-range-start')?.value;
+      const e = document.getElementById('dep-range-end')?.value;
+      const a = Number(document.getElementById('dep-range-amount')?.value || 0);
+      const box = document.getElementById('range-preview-box');
+      if (box) box.innerHTML = buildRangePreviewText(s, e, a);
+    }
+
+    function addDeposit(memberId) {
+      if (!requireAdmin()) return;
+      const dateVal = document.getElementById('dep-date').value || getTodayISO();
+      const amountVal = Number(document.getElementById('dep-amount').value);
+      const noteVal = document.getElementById('dep-note').value.trim() || 'দৈনিক কিস্তি';
+
+      if (!amountVal || amountVal <= 0) {
+        showToast('সঠিক টাকার পরিমাণ লিখুন');
+        return;
+      }
+
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return;
+
+      member.deposits.push({
+        id: 'd_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+        date: dateVal,
+        amount: amountVal,
+        note: noteVal
+      });
+
+      saveDatabase();
+      showToast(`${member.name}-এর নামে ৳${toBn(amountVal)} অটো-আপডেট হয়েছে`);
+      render();
+    }
+
+    function addRangeDeposit(memberId) {
+      if (!requireAdmin()) return;
+      const startISO = document.getElementById('dep-range-start').value;
+      const endISO = document.getElementById('dep-range-end').value;
+      const amountVal = Number(document.getElementById('dep-range-amount').value);
+      const noteVal = document.getElementById('dep-range-note').value.trim() || 'দৈনিক কিস্তি';
+      const skipDup = document.getElementById('dep-range-skip-dup').checked;
+
+      const dates = getDatesInRange(startISO, endISO);
+      if (!dates.length) {
+        showToast('সঠিক শুরুর ও শেষ তারিখ দিন');
+        return;
+      }
+      if (!amountVal || amountVal <= 0) {
+        showToast('সঠিক টাকার পরিমাণ লিখুন');
+        return;
+      }
+
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return;
+
+      const existingDates = new Set((member.deposits || []).map(d => d.date));
+      let addedCount = 0;
+
+      dates.forEach((dStr, idx) => {
+        if (skipDup && existingDates.has(dStr)) return;
+        member.deposits.push({
+          id: 'd_' + Date.now() + '_' + idx + '_' + Math.floor(Math.random() * 1000),
+          date: dStr,
+          amount: amountVal,
+          note: noteVal
+        });
+        addedCount++;
+      });
+
+      if (addedCount === 0) {
+        showToast('এই তারিখগুলোতে আগেই জমা রয়েছে!');
+        return;
+      }
+
+      saveDatabase();
+      showToast(`${member.name}-এর ${toBn(addedCount)} দিনের (৳${toBn(addedCount * amountVal)}) জমা আপডেট হয়েছে!`);
+      render();
+    }
+
+    function deleteDeposit(memberId, depositId) {
+      if (!requireAdmin()) return;
+      askConfirm('আপনি কি এই জমার হিসাবটি মুছে ফেলতে চান?', () => {
+        const member = db.members.find(m => m.id === memberId);
+        if (!member) return;
+        member.deposits = member.deposits.filter(d => d.id !== depositId);
+        saveDatabase();
+        showToast('হিসাবটি মুছে ফেলা হয়েছে');
+        render();
+      });
+    }
+
+    function openEditMemberPrompt(memberId) {
+      if (!requireAdmin()) return;
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return;
+      const newName = prompt('সদস্যের নাম সংশোধন করুন:', member.name);
+      if (newName === null) return;
+      const newPhone = prompt('মোবাইল নম্বর সংশোধন করুন:', member.phone);
+      if (newPhone === null) return;
+      if (newName.trim()) member.name = newName.trim();
+      if (newPhone.trim()) member.phone = newPhone.trim();
+      saveDatabase();
+      showToast('সদস্যের তথ্য আপডেট হয়েছে');
+      render();
+    }
+
+    function deleteMember(memberId) {
+      if (!requireAdmin()) return;
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return;
+      askConfirm(`সতর্কতা: "${member.name}"-কে তালিকা থেকে মুছে ফেলতে চান? তার সকল জমার হিসাবও মুছে যাবে!`, () => {
+        db.members = db.members.filter(m => m.id !== memberId);
+        saveDatabase();
+        showToast('সদস্যকে মুছে ফেলা হয়েছে');
+        navigate('home');
+      });
+    }
+
+    // ৩. মোট প্রদেয় কিস্তি পেজ
+    function renderKistiPage() {
+      const stats = getGlobalStats();
+      const rows = db.members.map(m => {
+        const total = getMemberTotal(m);
+        const kisti = getMemberInstallments(m);
+        return `
+          <tr onclick="navigate('member', ${m.id})" style="cursor:pointer;">
+            <td>${toBn(m.id)}</td>
+            <td style="font-weight:700;">${escapeHtml(m.name)}</td>
+            <td class="text-right">${toBn(kisti)} টি</td>
+            <td class="text-right" style="font-weight:700; color:var(--primary);">৳ ${toBn(total)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">📌 মোট প্রদেয় কিস্তি</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="total-box">
+            <div>
+              <div class="lbl">সর্বমোট জমাকৃত কিস্তি (১০০৳ হিসেবে)</div>
+              <div class="val">${toBn(stats.totalKisti)} টি কিস্তি</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="lbl">মোট এন্ট্রি</div>
+              <div style="font-size:18px; font-weight:800;">${toBn(stats.totalDepositsCount)} বার</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">সদস্য ভিত্তিক কিস্তির তালিকা</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>নং</th>
+                    <th>সদস্যের নাম</th>
+                    <th class="text-right">কিস্তি</th>
+                    <th class="text-right">মোট টাকা</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+                <tfoot>
+                  <tr class="tfoot-row">
+                    <td colspan="2">সর্বমোট</td>
+                    <td class="text-right">${toBn(stats.totalKisti)} টি</td>
+                    <td class="text-right">৳ ${toBn(stats.totalFund)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ৪. ড্র পাওয়া ব্যক্তি পেজ
+    function renderDrawsPage() {
+      const draws = [...(db.draws || [])].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const totalDrawAmt = draws.reduce((s, d) => s + Number(d.amount || 0), 0);
+
+      const memberOptions = db.members.map(m =>
+        `<option value="${m.id}">${toBn(m.id)}. ${escapeHtml(m.name)} (${escapeHtml(m.phone)})</option>`
+      ).join('');
+
+      const listHtml = draws.length
+        ? draws.map((d, idx) => `
+            <tr>
+              <td>${toBn(idx + 1)}</td>
+              <td>
+                <div style="font-weight:700;">${escapeHtml(d.memberName)}</div>
+                <div style="font-size:11.5px; color:var(--muted);">${formatDateBn(d.date)} ${d.note ? '• ' + escapeHtml(d.note) : ''}</div>
+              </td>
+              <td class="text-right" style="font-weight:700; color:#b45309;">৳ ${toBn(d.amount)}</td>
+              ${isAdminAuthenticated ? `
+                <td class="text-right">
+                  <button class="del-mini-btn" onclick="deleteDraw('${d.id}')">মুছুন</button>
+                </td>
+              ` : ''}
+            </tr>
+          `).join('')
+        : `<tr><td colspan="${isAdminAuthenticated ? 4 : 3}" class="empty-msg">এখনো কেউ ড্র পায়নি</td></tr>`;
+
+      const adminDrawForm = isAdminAuthenticated
+        ? `
+          <div class="card">
+            <div class="card-title">🏆 ড্র বিজয়ী যুক্ত করুন (এডমিন)</div>
+            <div class="form-group">
+              <label>সদস্য নির্বাচন করুন</label>
+              <select id="draw-member-id" class="form-control">${memberOptions}</select>
+            </div>
+            <div class="form-group">
+              <label>ড্র-এর তারিখ</label>
+              <input type="date" id="draw-date" class="form-control" value="${getTodayISO()}" />
+            </div>
+            <div class="form-group">
+              <label>ড্র-এর টাকার পরিমাণ</label>
+              <input type="number" id="draw-amount" class="form-control" placeholder="যেমন: 3200" inputmode="numeric" />
+            </div>
+            <div class="form-group">
+              <label>মন্তব্য (ঐচ্ছিক)</label>
+              <input type="text" id="draw-note" class="form-control" placeholder="যেমন: ১ম ড্র বিজয়ী" />
+            </div>
+            <button class="btn btn-primary" onclick="addDrawWinner()">✅ ড্র বিজয়ী সেভ করুন</button>
+          </div>
+        `
+        : `<div class="readonly-notice">🔒 ড্র বিজয়ী যুক্ত বা পরিবর্তন শুধুমাত্র এডমিন করতে পারবেন।</div>`;
+
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">🏆 ড্র পাওয়া ব্যক্তি</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="total-box" style="background: linear-gradient(135deg, #d97706, #b45309);">
+            <div>
+              <div class="lbl">মোট ড্র পেয়েছেন</div>
+              <div class="val">${toBn(draws.length)} জন</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="lbl">মোট ড্র প্রদান</div>
+              <div style="font-size:18px; font-weight:800;">৳ ${toBn(totalDrawAmt)}</div>
+            </div>
+          </div>
+
+          ${adminDrawForm}
+
+          <div class="card">
+            <div class="card-title">ড্র পাওয়া ব্যক্তিদের তালিকা</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>নং</th>
+                    <th>বিজয়ী ও তারিখ</th>
+                    <th class="text-right">টাকা</th>
+                    ${isAdminAuthenticated ? '<th class="text-right">অ্যাকশন</th>' : ''}
+                  </tr>
+                </thead>
+                <tbody>${listHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function addDrawWinner() {
+      if (!requireAdmin()) return;
+      const memberId = Number(document.getElementById('draw-member-id').value);
+      const date = document.getElementById('draw-date').value || getTodayISO();
+      const amount = Number(document.getElementById('draw-amount').value || 0);
+      const note = document.getElementById('draw-note').value.trim();
+
+      const member = db.members.find(m => m.id === memberId);
+      if (!member) return;
+
+      if (!db.draws) db.draws = [];
+      db.draws.push({
+        id: 'dr_' + Date.now(),
+        memberId: member.id,
+        memberName: member.name,
+        date,
+        amount,
+        note
+      });
+
+      saveDatabase();
+      showToast(`${member.name} ড্র বিজয়ী হিসেবে আপডেট হয়েছেন`);
+      render();
+    }
+
+    function deleteDraw(drawId) {
+      if (!requireAdmin()) return;
+      askConfirm('এই ড্র এন্ট্রিটি মুছে ফেলতে চান?', () => {
+        db.draws = (db.draws || []).filter(d => d.id !== drawId);
+        saveDatabase();
+        showToast('ড্র তথ্য মুছে ফেলা হয়েছে');
+        render();
+      });
+    }
+
+    // ৫. টোটাল ফান্ড পেজ
+    function renderFundPage() {
+      const stats = getGlobalStats();
+      const memberRows = db.members.map(m => {
+        const total = getMemberTotal(m);
+        return `
+          <tr onclick="navigate('member', ${m.id})" style="cursor:pointer;">
+            <td>${toBn(m.id)}</td>
+            <td>${escapeHtml(m.name)}</td>
+            <td class="text-right" style="font-weight:700; color:#0369a1;">৳ ${toBn(total)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">💰 টোটাল ফান্ড</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="total-box" style="background: linear-gradient(135deg, #0284c7, #0369a1);">
+            <div>
+              <div class="lbl">সর্বমোট জমাকৃত ফান্ড</div>
+              <div class="val">৳ ${toBn(stats.totalFund)}</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="lbl">মোট সদস্য</div>
+              <div style="font-size:18px; font-weight:800;">${toBn(db.members.length)} জন</div>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-box">
+              <div class="s-lbl">ড্র প্রদান করা হয়েছে</div>
+              <div class="s-val" style="color:#d97706;">৳ ${toBn(stats.totalDrawAmount)}</div>
+            </div>
+            <div class="stat-box">
+              <div class="s-lbl">হাতে অবশিষ্ট (নিট ফান্ড)</div>
+              <div class="s-val" style="color:#16a34a;">৳ ${toBn(stats.netBalance)}</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">সদস্য অনুযায়ী ফান্ড হিসাব</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>নং</th>
+                    <th>সদস্য</th>
+                    <th class="text-right">মোট জমা</th>
+                  </tr>
+                </thead>
+                <tbody>${memberRows}</tbody>
+                <tfoot>
+                  <tr class="tfoot-row">
+                    <td colspan="2">সর্বমোট ফান্ড</td>
+                    <td class="text-right">৳ ${toBn(stats.totalFund)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ৬. নতুন সদস্য এড করা পেজ (শুধুমাত্র এডমিন)
+    function renderAddMemberPage() {
+      if (!isAdminAuthenticated) {
+        openAdminGate('addMember');
+        return renderHome();
+      }
+      const nextId = db.members.length ? Math.max(...db.members.map(m => m.id)) + 1 : 1;
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">➕ নতুন সদস্য এড করা</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="card">
+            <div class="card-title">➕ নতুন সদস্যের তথ্য দিন (সিরিয়াল নং: ${toBn(nextId)})</div>
+            <div class="form-group">
+              <label>সদস্যের পূর্ণ নাম</label>
+              <input type="text" id="new-member-name" class="form-control" placeholder="নাম লিখুন" />
+            </div>
+            <div class="form-group">
+              <label>মোবাইল নম্বর</label>
+              <input type="tel" id="new-member-phone" class="form-control" placeholder="01XXXXXXXXX" inputmode="tel" />
+            </div>
+            <button class="btn btn-primary" onclick="addNewMember()">✅ সদস্য যুক্ত করুন</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function addNewMember() {
+      if (!requireAdmin()) return;
+      const name = document.getElementById('new-member-name').value.trim();
+      const phone = document.getElementById('new-member-phone').value.trim();
+
+      if (!name) {
+        showToast('অনুগ্রহ করে সদস্যের নাম লিখুন');
+        return;
+      }
+      if (!phone) {
+        showToast('অনুগ্রহ করে মোবাইল নম্বর লিখুন');
+        return;
+      }
+
+      const nextId = db.members.length ? Math.max(...db.members.map(m => m.id)) + 1 : 1;
+      db.members.push({
+        id: nextId,
+        name,
+        phone,
+        deposits: []
+      });
+
+      saveDatabase();
+      showToast(`${name} সফলভাবে যুক্ত ও আপডেট হয়েছেন`);
+      navigate('home');
+    }
+
+    // ৭. স্মার্ট ব্যাকআপ ও অটো-আপডেট পেজ
+    function handleBackupClick() {
+      if (isAdminAuthenticated) {
+        saveDatabase();
+        showToast('তথ্য অটো-আপডেট ও সিঙ্ক হয়েছে!');
+      } else {
+        syncFromCloud(false);
+      }
+      navigate('backup');
+    }
+
+    function buildSummaryReportText() {
+      const stats = getGlobalStats();
+      let lines = [
+        `🏥 BARAKAH MULTICARE HOSPITAL UNITY`,
+        `👤 Admin: ${db.adminName || 'Shohag Hossain'}`,
+        `📅 আপডেট: ${db.lastBackup || 'এইমাত্র'}`,
+        `━━━━━━━━━━━━━━━━━━`,
+        `👥 মোট সদস্য: ${toBn(db.members.length)} জন`,
+        `📌 মোট কিস্তি: ${toBn(stats.totalKisti)} টি`,
+        `💰 টোটাল ফান্ড: ৳ ${toBn(stats.totalFund)}`,
+        `🏆 ড্র প্রদান: ৳ ${toBn(stats.totalDrawAmount)} (${toBn(stats.totalDrawCount)} জন)`,
+        `💵 নিট ব্যালেন্স: ৳ ${toBn(stats.netBalance)}`,
+        `━━━━━━━━━━━━━━━━━━`,
+        `সদস্য ভিত্তিক হিসাব:`
+      ];
+      db.members.forEach(m => {
+        const t = getMemberTotal(m);
+        if (t > 0) {
+          lines.push(`${toBn(m.id)}. ${m.name}: ৳ ${toBn(t)} (${toBn(getMemberInstallments(m))} কিস্তি)`);
+        }
+      });
+      return lines.join('\n');
+    }
+
+    function shareSummaryReport() {
+      const text = buildSummaryReportText();
+      if (navigator.share) {
+        navigator.share({
+          title: 'BARAKAH MULTICARE HOSPITAL UNITY',
+          text
+        }).catch(() => {});
+      } else {
+        copyTextSafe(text, 'হিসাবের সামারি কপি হয়েছে! এখন পেস্ট করে শেয়ার করুন');
+      }
+    }
+
+    function renderBackupPage() {
+      const stats = getGlobalStats();
+      return `
+        <header class="page-header">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">☁️ স্মার্ট ব্যাকআপ ও আপডেট</div>
+        </header>
+
+        <div class="content-pad">
+          <div class="card">
+            <div class="card-title">✅ অটো-আপডেট স্ট্যাটাস</div>
+            <p style="font-size:13.5px; color:var(--primary); font-weight:700; margin-bottom:6px;">
+              সর্বশেষ আপডেট: ${escapeHtml(db.lastBackup || 'এইমাত্র')}
+            </p>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:12px; line-height:1.5;">
+              এডমিনের যেকোনো পরিবর্তন ও AI আপডেট সাথে সাথে সেভ হয়। মোট ফান্ড: <b>৳ ${toBn(stats.totalFund)}</b> (${toBn(stats.totalKisti)} কিস্তি)।
+            </p>
+            <div class="btn-row">
+              <button class="btn btn-accent" onclick="syncFromCloud(false)">🔄 আপডেট চেক</button>
+              <button class="btn btn-primary" onclick="shareSummaryReport()">📤 সামারি শেয়ার</button>
+            </div>
+          </div>
+
+          ${isAdminAuthenticated ? `
+            <div class="card">
+              <div class="card-title">🛡️ এডমিন পূর্ণাঙ্গ ব্যাকআপ ও রিস্টোর</div>
+              <p style="font-size:12.5px; color:var(--muted); margin-bottom:12px; line-height:1.5;">
+                আপডেটেড HTML ফাইলটি ডাউনলোড করে সবার সাথে শেয়ার করলে বা হোস্টিংয়ে দিলে সবার অ্যাপ ও AI-এর সব নতুন ফিচার অটো আপডেট হয়ে যাবে।
+              </p>
+              <button class="btn btn-success" onclick="downloadUpdatedHtml()" style="margin-bottom:10px;">
+                📲 আপডেটেড অ্যাপ ফাইল ডাউনলোড (.html)
+              </button>
+              <button class="btn btn-primary" onclick="downloadJsonBackup()" style="margin-bottom:10px;">
+                📥 ডেটা ব্যাকআপ ডাউনলোড (.json)
+              </button>
+              <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">
+                📂 পুরোনো ব্যাকআপ রিস্টোর করুন (.json)
+              </button>
+              <input type="file" id="import-file" accept=".json,application/json" style="display:none;" onchange="importJsonBackup(event)" />
+            </div>
+          ` : `
+            <div class="readonly-notice">
+              🔒 পূর্ণাঙ্গ ব্যাকআপ ডাউনলোড ও রিস্টোর শুধুমাত্র এডমিনের জন্য সংরক্ষিত।
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function downloadJsonBackup() {
+      if (!requireAdmin()) return;
+      const dataStr = JSON.stringify(db, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `barakah_backup_${getTodayISO()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('ব্যাকআপ JSON ফাইল ডাউনলোড হয়েছে');
+    }
+
+    function importJsonBackup(event) {
+      if (!requireAdmin()) return;
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed || !Array.isArray(parsed.members)) {
+            showToast('সঠিক ব্যাকআপ ফাইল নয়!');
+            return;
+          }
+          db = ensureDbStructure(parsed);
+          saveDatabase();
+          showToast('ব্যাকআপ সফলভাবে রিস্টোর হয়েছে!');
+          render();
+        } catch (err) {
+          showToast('ফাইলটি পড়া যায়নি!');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // ৮. এডমিন গেট ও এডমিন প্যানেল
+    function openAdminGate(targetPage = null) {
+      pendingTargetAfterLogin = targetPage;
+      document.getElementById('admin-pin-input').value = '';
+      document.getElementById('admin-pin-error').style.display = 'none';
+      document.getElementById('admin-modal').style.display = 'flex';
+      setTimeout(() => document.getElementById('admin-pin-input').focus(), 120);
+    }
+
+    function closeAdminGate() {
+      pendingTargetAfterLogin = null;
+      document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    function verifyAdminPin() {
+      const entered = document.getElementById('admin-pin-input').value;
+      const correctPin = db.adminPin || '@Shohag007';
+      if (entered === correctPin) {
+        isAdminAuthenticated = true;
+        const target = pendingTargetAfterLogin;
+        closeAdminGate();
+        showToast(`স্বাগতম, ${db.adminName || 'Shohag Hossain'}!`);
+        if (target) navigate(target);
+        else render();
+      } else {
+        const err = document.getElementById('admin-pin-error');
+        err.textContent = '❌ ভুল পিন! শুধুমাত্র এডমিন প্রবেশ করতে পারবেন।';
+        err.style.display = 'block';
+      }
+    }
+
+    function generateFullUpdatedHtmlCode() {
+      const safeJson = JSON.stringify(db, null, 2).replace(/<\/script/gi, '<\\/script');
+      return INITIAL_HTML_SHELL.replace(
+        /(<script id="default-db" type="application\/json">)[\s\S]*?(<\/script>)/i,
+        (_, p1, p2) => `${p1}\n  ${safeJson}\n  ${p2}`
+      );
+    }
+
+    // ============ AI অ্যাসিস্ট্যান্ট ইঞ্জিন ============
+    function logAiChat(userPrompt, botReply) {
+      if (!db.appConfig) db.appConfig = getDefaultAppConfig();
+      if (!Array.isArray(db.appConfig.aiLogs)) db.appConfig.aiLogs = [];
+      db.appConfig.aiLogs.push({
+        time: new Date().toLocaleTimeString('bn-BD'),
+        user: userPrompt,
+        bot: botReply
+      });
+      if (db.appConfig.aiLogs.length > 20) {
+        db.appConfig.aiLogs = db.appConfig.aiLogs.slice(-20);
+      }
+    }
+
+    function runLocalSmartAi(promptRaw) {
+      const p = (promptRaw || '').trim();
+      const lower = toEnDigits(p).toLowerCase();
+      const cfg = db.appConfig;
+      let actions = [];
+
+      // ১. ডার্ক মোড / লাইট মোড
+      if (lower.includes('ডার্ক') || lower.includes('dark') || lower.includes('কালো থিম')) {
+        if (lower.includes('বন্ধ') || lower.includes('off')) {
+          cfg.darkMode = false;
+          actions.push('☀️ ডার্ক মোড বন্ধ করে লাইট মোড চালু করা হয়েছে');
+        } else {
+          cfg.darkMode = true;
+          actions.push('🌙 ডার্ক মোড চালু করা হয়েছে');
+        }
+      } else if (lower.includes('লাইট মোড') || lower.includes('light mode') || lower.includes('সাদা থিম')) {
+        cfg.darkMode = false;
+        actions.push('☀️ লাইট মোড চালু করা হয়েছে');
+      }
+
+      // ২. থিম কালার পরিবর্তন
+      const colorMap = [
+        { keys: ['নীল', 'blue'], hex: '#0284c7', name: 'নীল (Blue)' },
+        { keys: ['বেগুনি', 'purple', 'violet'], hex: '#7c3aed', name: 'বেগুনি (Purple)' },
+        { keys: ['সবুজ', 'green'], hex: '#16a34a', name: 'সবুজ (Green)' },
+        { keys: ['লাল', 'red', 'মেরুন'], hex: '#dc2626', name: 'লাল (Red)' },
+        { keys: ['গোলাপি', 'pink'], hex: '#db2777', name: 'গোলাপি (Pink)' },
+        { keys: ['কমলা', 'orange'], hex: '#ea580c', name: 'কমলা (Orange)' },
+        { keys: ['টিল', 'teal', 'আগের কালার', 'ডিফল্ট'], hex: '#0f766e', name: 'টিল (Default)' }
+      ];
+      const hexMatch = p.match(/#[0-9a-fA-F]{6}/);
+      if (hexMatch) {
+        cfg.themeColor = hexMatch[0];
+        actions.push(`🎨 অ্যাপের প্রাইমারি রঙ ${hexMatch[0]} করা হয়েছে`);
+      } else if (lower.includes('থিম') || lower.includes('কালার') || lower.includes('রঙ') || lower.includes('color') || lower.includes('theme')) {
+        for (const c of colorMap) {
+          if (c.keys.some(k => lower.includes(k))) {
+            cfg.themeColor = c.hex;
+            actions.push(`🎨 অ্যাপের থিম রঙ "${c.name}" এ আপডেট করা হয়েছে`);
+            break;
+          }
+        }
+      }
+
+      // ৩. টপ ডিপোজিটর / লিডারবোর্ড ফিচার
+      if (lower.includes('লিডারবোর্ড') || lower.includes('টপ ডিপোজিটর') || lower.includes('শীর্ষ') || lower.includes('leaderboard')) {
+        if (lower.includes('বন্ধ') || lower.includes('বাদ') || lower.includes('হাইড') || lower.includes('off')) {
+          cfg.showLeaderboard = false;
+          actions.push('🏅 শীর্ষ ডিপোজিটর ফিচারটি বন্ধ করা হয়েছে');
+        } else {
+          cfg.showLeaderboard = true;
+          actions.push('🏅 নতুন ফিচার: হোমপেজে "শীর্ষ ডিপোজিটর (টপ ৩)" কার্ড যুক্ত করা হয়েছে!');
+        }
+      }
+
+      // ৪. ফান্ড টার্গেট প্রগ্রেস বার ফিচার
+      if (lower.includes('টার্গেট') || lower.includes('লক্ষ্য') || lower.includes('target')) {
+        const nums = toEnDigits(p).match(/\d+/);
+        if (lower.includes('বন্ধ') || lower.includes('বাদ') || lower.includes('মুছ')) {
+          cfg.fundTarget = 0;
+          actions.push('🎯 ফান্ড লক্ষ্যমাত্রা বার সরানো হয়েছে');
+        } else if (nums) {
+          cfg.fundTarget = Number(nums[0]);
+          actions.push(`🎯 নতুন ফিচার: ৳ ${toBn(cfg.fundTarget)} ফান্ড লক্ষ্যমাত্রা প্রগ্রেস বার যুক্ত করা হয়েছে!`);
+        } else {
+          cfg.fundTarget = 50000;
+          actions.push('🎯 নতুন ফিচার: ৳ ৫০,০০০ ফান্ড লক্ষ্যমাত্রা প্রগ্রেস বার যুক্ত করা হয়েছে!');
+        }
+      }
+
+      // ৫. রানিং বার আপডেট (হোম বা বিকাশ)
+      if (lower.includes('রানিং বার') || lower.includes('টিকার') || lower.includes('marquee')) {
+        const splitVal = p.split(/[:ঃ=]/).slice(1).join(':').trim();
+        if (splitVal) {
+          if (lower.includes('বিকাশ') || lower.includes('bkash')) {
+            cfg.bkashTickerText = splitVal;
+            actions.push(`📱 বিকাশ রানিং বার আপডেট হয়েছে: "${splitVal}"`);
+          } else {
+            cfg.homeTickerText = splitVal;
+            actions.push(`📢 হোম রানিং বার আপডেট হয়েছে: "${splitVal}"`);
+          }
+        }
+      }
+
+      // ৬. নোটিশ / ঘোষণা ব্যানার
+      if (lower.includes('নোটিশ') || lower.includes('ঘোষণা') || lower.includes('notice')) {
+        if (lower.includes('মুছ') || lower.includes('বন্ধ') || lower.includes('বাদ')) {
+          cfg.noticeBanner = '';
+          actions.push('📢 নোটিশ ব্যানার সরিয়ে ফেলা হয়েছে');
+        } else {
+          const splitVal = p.split(/[:ঃ=]/).slice(1).join(':').trim() || p.replace(/নোটিশ|ঘোষণা|দাও|যোগ করো|করো/gi, '').trim();
+          if (splitVal) {
+            cfg.noticeBanner = splitVal;
+            actions.push(`📢 হোমপেজে নতুন নোটিশ ব্যানার যুক্ত হয়েছে: "${splitVal}"`);
+          }
+        }
+      }
+
+      // ৭. বিকাশ নাম্বার পরিবর্তন
+      if ((lower.includes('বিকাশ') || lower.includes('bkash')) && (lower.includes('নাম্বার') || lower.includes('নম্বর') || lower.includes('number'))) {
+        const phoneMatch = toEnDigits(p).match(/01\d{9}/);
+        if (phoneMatch) {
+          cfg.bkashNumber = phoneMatch[0];
+          actions.push(`💳 বিকাশ পার্সোনাল নাম্বার পরিবর্তন করে ${phoneMatch[0]} করা হয়েছে`);
+        }
+      }
+
+      // ৮. সদস্য সর্টিং (বেশি জমা আগে / আইডি অনুযায়ী)
+      if (lower.includes('সর্ট') || lower.includes('বেশি জমা আগে') || lower.includes('ক্রম')) {
+        if (lower.includes('বেশি') || lower.includes('টাকা')) {
+          cfg.sortBy = 'amount_desc';
+          actions.push('📊 সদস্য তালিকা এখন বেশি জমা অনুযায়ী সাজানো হয়েছে');
+        } else {
+          cfg.sortBy = 'id';
+          actions.push('📊 সদস্য তালিকা আইডি অনুযায়ী সাজানো হয়েছে');
+        }
+      }
+
+      // ৯. কাস্টম ফিচার কার্ড / উইজেট যোগ বা মোছা
+      if (lower.includes('উইজেট মুছ') || lower.includes('ফিচার মুছ') || lower.includes('সব কাস্টম মুছ')) {
+        cfg.customWidgets = [];
+        cfg.customCss = '';
+        actions.push('🧹 সব কাস্টম ফিচার কার্ড ও কাস্টম CSS মুছে ফেলা হয়েছে');
+      } else if ((lower.includes('কার্ড') || lower.includes('উইজেট') || lower.includes('তথ্য বক্স')) && p.includes(':')) {
+        const afterColon = p.split(/[:ঃ]/).slice(1).join(':').trim();
+        const parts = afterColon.split('|');
+        const title = (parts[0] || 'বিশেষ তথ্য').trim();
+        const body = (parts[1] || parts[0] || '').trim();
+        cfg.customWidgets.push({ id: 'w_' + Date.now(), title, body });
+        actions.push(`✨ নতুন কার্ড "${title}" হোমপেজে যুক্ত হয়েছে!`);
+      }
+
+      // ১০. সবার বা নির্দিষ্ট সদস্যের আজকের ডিপোজিট জমা (প্রোম্পট থেকে)
+      if ((lower.includes('জমা') || lower.includes('ডিপোজিট') || lower.includes('কিস্তি')) && (lower.includes('সবাই') || lower.includes('সকল')) && !lower.includes('রানিং')) {
+        const amtMatch = toEnDigits(p).match(/\d+/);
+        const amt = amtMatch ? Number(amtMatch[0]) : 100;
+        if (amt > 0 && amt <= 50000) {
+          const today = getTodayISO();
+          let count = 0;
+          db.members.forEach((m, idx) => {
+            m.deposits.push({
+              id: 'd_ai_' + Date.now() + '_' + idx,
+              date: today,
+              amount: amt,
+              note: 'AI কমান্ড জমা'
+            });
+            count++;
+          });
+          actions.push(`💰 সকল ${toBn(count)} জন সদস্যের নামে আজ (${formatDateBn(today)}) ৳ ${toBn(amt)} জমা করা হয়েছে!`);
+        }
+      } else if ((lower.includes('জমা') || lower.includes('ডিপোজিট')) && !lower.includes('রানিং') && !lower.includes('টার্গেট')) {
+        const amtMatch = toEnDigits(p).match(/\b(\d{2,5})\b/);
+        const amt = amtMatch ? Number(amtMatch[1]) : 0;
+        const matchedMember = db.members.find(m => lower.includes(m.name.toLowerCase()));
+        if (matchedMember && amt > 0) {
+          const today = getTodayISO();
+          matchedMember.deposits.push({
+            id: 'd_ai_' + Date.now(),
+            date: today,
+            amount: amt,
+            note: 'AI কমান্ড জমা'
+          });
+          actions.push(`✅ "${matchedMember.name}"-এর নামে আজ ৳ ${toBn(amt)} জমা আপডেট হয়েছে!`);
+        }
+      }
+
+      // ১১. নতুন সদস্য যোগ (প্রোম্পট থেকে)
+      if (lower.includes('নতুন সদস্য') || lower.includes('সদস্য যোগ')) {
+        const phoneMatch = toEnDigits(p).match(/01\d{9}/);
+        if (phoneMatch) {
+          const cleanName = p
+            .replace(/নতুন সদস্য|সদস্য যোগ|যোগ করো|নাম|ফোন|মোবাইল|[:ঃ-]/gi, ' ')
+            .replace(phoneMatch[0], '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          if (cleanName) {
+            const nextId = db.members.length ? Math.max(...db.members.map(m => m.id)) + 1 : 1;
+            db.members.push({ id: nextId, name: cleanName, phone: phoneMatch[0], deposits: [] });
+            actions.push(`👤 নতুন সদস্য "${cleanName}" (${phoneMatch[0]}) #${toBn(nextId)} নম্বরে যুক্ত হয়েছেন!`);
+          }
+        }
+      }
+
+      // ১২. কাস্টম CSS সরাসরি প্রয়োগ
+      if (lower.startsWith('css:')) {
+        cfg.customCss = p.slice(4).trim();
+        actions.push('🎨 কাস্টম CSS স্টাইল অ্যাপে প্রয়োগ করা হয়েছে!');
+      }
+
+      return actions;
+    }
+
+    async function callExternalAiIfConfigured(promptText) {
+      const cfg = db.appConfig;
+      const apiKey = (cfg.aiApiKey || '').trim();
+      if (!apiKey) return null;
+
+      const systemInstruction = `You are an AI App Updater for "BARAKAH MULTICARE HOSPITAL UNITY" (Bengali mobile savings app).
+Given the admin's prompt and current appConfig JSON, return ONLY a valid JSON object (no markdown) with any subset of these keys to update the app live:
+- homeTickerText (string)
+- bkashTickerText (string)
+- bkashNumber (string)
+- themeColor (hex string like "#0284c7")
+- darkMode (boolean)
+- noticeBanner (string)
+- showLeaderboard (boolean)
+- fundTarget (number)
+- sortBy ("id" or "amount_desc")
+- customCss (string of valid CSS)
+- addWidget ({ "title": "...", "body": "..." })
+- replyBn (short Bengali summary of what you updated)
+Current appConfig: ${JSON.stringify({
+  homeTickerText: cfg.homeTickerText,
+  bkashTickerText: cfg.bkashTickerText,
+  bkashNumber: cfg.bkashNumber,
+  themeColor: cfg.themeColor,
+  darkMode: cfg.darkMode,
+  noticeBanner: cfg.noticeBanner,
+  showLeaderboard: cfg.showLeaderboard,
+  fundTarget: cfg.fundTarget,
+  sortBy: cfg.sortBy
+})}`;
+
+      try {
+        let rawText = '';
+        if (cfg.aiProvider === 'openai') {
+          const res = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-4o-mini',
+              messages: [
+                { role: 'system', content: systemInstruction },
+                { role: 'user', content: promptText }
+              ],
+              temperature: 0.3
+            })
+          });
+          const data = await res.json();
+          rawText = data?.choices?.[0]?.message?.content || '';
+        } else {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: systemInstruction + '\n\nAdmin Prompt: ' + promptText }] }]
+            })
+          });
+          const data = await res.json();
+          rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        }
+
+        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) return null;
+        const patch = JSON.parse(jsonMatch[0]);
+        const applied = [];
+        const allowedKeys = ['homeTickerText', 'bkashTickerText', 'bkashNumber', 'themeColor', 'darkMode', 'noticeBanner', 'showLeaderboard', 'fundTarget', 'sortBy', 'customCss'];
+        allowedKeys.forEach(k => {
+          if (patch[k] !== undefined) {
+            cfg[k] = patch[k];
+            applied.push(k);
+          }
+        });
+        if (patch.addWidget && patch.addWidget.title) {
+          cfg.customWidgets.push({ id: 'w_' + Date.now(), title: patch.addWidget.title, body: patch.addWidget.body || '' });
+          applied.push('customWidget');
+        }
+        return patch.replyBn || (applied.length ? `🤖 AI সফলভাবে আপডেট করেছে: ${applied.join(', ')}` : null);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function submitAiPrompt(presetText = null) {
+      if (!requireAdmin()) return;
+      const inputEl = document.getElementById('ai-prompt-input');
+      const promptText = (presetText || (inputEl ? inputEl.value : '')).trim();
+      if (!promptText) {
+        showToast('দয়া করে একটি প্রোম্পট বা নির্দেশনা লিখুন');
+        return;
+      }
+
+      // Undo স্ন্যাপশট সংরক্ষণ
+      aiUndoSnapshot = JSON.stringify(db);
+
+      const btn = document.getElementById('ai-send-btn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ AI আপডেট করছে...';
+      }
+
+      const localActions = runLocalSmartAi(promptText);
+      let reply = '';
+
+      if (localActions.length) {
+        reply = localActions.join('\n');
+      } else if (db.appConfig.aiApiKey) {
+        const extReply = await callExternalAiIfConfigured(promptText);
+        if (extReply) reply = extReply;
+      }
+
+      if (!reply) {
+        reply = '💡 সরাসরি এই প্রোম্পটটি বুঝতে পারিনি। উদাহরণ হিসেবে নিচের কুইক বাটন ব্যবহার করুন অথবা লিখুন:\n• "শীর্ষ ডিপোজিটর ফিচার যোগ করো"\n• "ফান্ড টার্গেট ৫০০০০ করো"\n• "নোটিশ: শুক্রবার মিটিং হবে"\n• "থিম নীল করো" বা "ডার্ক মোড চালু করো"\n• "কার্ড: শিরোনাম | বিস্তারিত"';
+      } else {
+        saveDatabase();
+        showToast('✨ AI অটো-আপডেট সম্পন্ন হয়েছে!');
+      }
+
+      logAiChat(promptText, reply);
+      saveDatabase();
+      if (inputEl && !presetText) inputEl.value = '';
+      render();
+      setTimeout(() => {
+        const box = document.getElementById('ai-chat-box');
+        if (box) box.scrollTop = box.scrollHeight;
+      }, 60);
+    }
+
+    function undoLastAiUpdate() {
+      if (!requireAdmin() || !aiUndoSnapshot) {
+        showToast('আগের কোনো AI পরিবর্তন পাওয়া যায়নি');
+        return;
+      }
+      db = ensureDbStructure(JSON.parse(aiUndoSnapshot));
+      aiUndoSnapshot = null;
+      saveDatabase();
+      showToast('↩️ সর্বশেষ AI আপডেট বাতিল করা হয়েছে');
+      render();
+    }
+
+    function saveAiApiConfig() {
+      if (!requireAdmin()) return;
+      db.appConfig.aiProvider = document.getElementById('ai-provider-select').value;
+      db.appConfig.aiApiKey = document.getElementById('ai-api-key-input').value.trim();
+      saveDatabase();
+      showToast('AI কনফিগারেশন সেভ হয়েছে');
+    }
+
+    function renderAdminPage() {
+      if (!isAdminAuthenticated) {
+        navigate('home');
+        return '';
+      }
+
+      const cfg = db.appConfig || getDefaultAppConfig();
+      let tabContent = '';
+
+      if (currentView.adminTab === 'ai') {
+        const logs = cfg.aiLogs || [];
+        const chatHtml = logs.length
+          ? logs.map(item => `
+              <div class="ai-msg ai-msg-user">${escapeHtml(item.user)}</div>
+              <div class="ai-msg ai-msg-bot">${escapeHtml(item.bot).replace(/\n/g, '<br>')}</div>
+            `).join('')
+          : `<div class="ai-msg ai-msg-bot">👋 হ্যালো এডমিন! আমি আপনার <b>Barakah AI Assistant</b>। আমাকে প্রোম্পট লিখে দিলে আমি সাথে সাথে অ্যাপে নতুন ফিচার, থিম, নোটিশ, রানিং বার বা হিসাব অটো আপডেট করে দেবো।</div>`;
+
+        tabContent = `
+          <div class="ai-header-card">
+            <div style="font-size:15.5px; font-weight:800; margin-bottom:4px;">🤖 AI অ্যাপ আপডেটার অ্যাসিস্ট্যান্ট</div>
+            <div style="font-size:12px; opacity:0.92; line-height:1.45;">
+              প্রোম্পট লিখলেই অ্যাপে অটো-আপডেট ও নতুন ফিচার যুক্ত হবে। নিচের যেকোনো আইডিয়া ট্যাপ করুন বা নিজের প্রোম্পট লিখুন:
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ai-chip-row">
+              <button class="ai-chip" onclick="submitAiPrompt('শীর্ষ ডিপোজিটর ফিচার যোগ করো')">🏅 টপ ডিপোজিটর</button>
+              <button class="ai-chip" onclick="submitAiPrompt('ফান্ড টার্গেট 50000 করো')">🎯 ফান্ড টার্গেট</button>
+              <button class="ai-chip" onclick="submitAiPrompt('ডার্ক মোড চালু করো')">🌙 ডার্ক মোড</button>
+              <button class="ai-chip" onclick="submitAiPrompt('ডার্ক মোড বন্ধ করো এবং থিম টিল করো')">☀️ ডিফল্ট থিম</button>
+              <button class="ai-chip" onclick="submitAiPrompt('থিম নীল করো')">🎨 নীল থিম</button>
+              <button class="ai-chip" onclick="submitAiPrompt('নোটিশ: আগামী শুক্রবার আমাদের মাসিক সভা অনুষ্ঠিত হবে')">📢 নোটিশ দাও</button>
+            </div>
+
+            <div class="ai-chat-box" id="ai-chat-box">${chatHtml}</div>
+
+            <div class="form-group" style="margin-bottom:8px;">
+              <textarea id="ai-prompt-input" class="form-control" style="min-height:66px; font-size:14px;" placeholder="যেমন: ফান্ড টার্গেট ১০০০০০ করো, অথবা রানিং বার: নতুন ঘোষণা..., অথবা কার্ড: শিরোনাম | বিস্তারিত"></textarea>
+            </div>
+            <div class="btn-row">
+              <button id="ai-send-btn" class="btn" style="background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff;" onclick="submitAiPrompt()">✨ AI আপডেট করুন</button>
+              <button class="btn btn-outline" onclick="undoLastAiUpdate()">↩️ Undo</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔌 অ্যাডভান্সড লাইভ AI API (ঐচ্ছিক)</div>
+            <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">
+              অফলাইন স্মার্ট AI সবসময় ফ্রিতে কাজ করে। এছাড়া নিজের Gemini বা OpenAI API Key দিলে যেকোনো জটিল কাস্টম ডিজাইন/CSS প্রোম্পটও অটো জেনারেট হবে।
+            </p>
+            <div class="btn-row">
+              <div class="form-group">
+                <label>প্রোভাইডার</label>
+                <select id="ai-provider-select" class="form-control">
+                  <option value="gemini" ${cfg.aiProvider === 'gemini' ? 'selected' : ''}>Google Gemini</option>
+                  <option value="openai" ${cfg.aiProvider === 'openai' ? 'selected' : ''}>OpenAI</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>API Key</label>
+                <input type="password" id="ai-api-key-input" class="form-control" value="${escapeHtml(cfg.aiApiKey || '')}" placeholder="ঐচ্ছিক API Key" />
+              </div>
+            </div>
+            <button class="btn btn-outline" onclick="saveAiApiConfig()">💾 API সেভ করুন</button>
+          </div>
+        `;
+      } else if (currentView.adminTab === 'bulk') {
+        const memberChecks = db.members.map(m => `
+          <label class="bulk-member-item">
+            <input type="checkbox" class="bulk-member-cb" value="${m.id}" onchange="updateBulkPreview()" />
+            <span>${toBn(m.id)}. ${escapeHtml(m.name)} <small style="color:var(--muted);">(৳${toBn(getMemberTotal(m))})</small></span>
+          </label>
+        `).join('');
+
+        tabContent = `
+          <div class="card">
+            <div class="card-title">📅 তারিখ রেঞ্জ অনুযায়ী ডিপোজিট আদায়</div>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">
+              যেমন: ১১/২২/২৬ থেকে ১১/২৯/২৬ পর্যন্ত এক বা একাধিক সদস্যের ডিপোজিট একসাথে আদায় করুন।
+            </p>
+            <div class="btn-row">
+              <div class="form-group">
+                <label>শুরুর তারিখ</label>
+                <input type="date" id="bulk-start" class="form-control" value="2026-11-22" oninput="updateBulkPreview()" />
+              </div>
+              <div class="form-group">
+                <label>শেষ তারিখ</label>
+                <input type="date" id="bulk-end" class="form-control" value="2026-11-29" oninput="updateBulkPreview()" />
+              </div>
+            </div>
+            <div class="btn-row">
+              <div class="form-group">
+                <label>প্রতিদিনের টাকা</label>
+                <input type="number" id="bulk-amount" class="form-control" value="100" min="1" inputmode="numeric" oninput="updateBulkPreview()" />
+              </div>
+              <div class="form-group">
+                <label>মন্তব্য</label>
+                <input type="text" id="bulk-note" class="form-control" value="দৈনিক কিস্তি" />
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-size:13px; font-weight:700; color:var(--muted);">সদস্য নির্বাচন করুন:</span>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="mini-pill-btn mini-pill-login" onclick="toggleAllBulkMembers(true)">সবাই</button>
+                <button type="button" class="mini-pill-btn" style="background:#e2e8f0; color:#0f172a;" onclick="toggleAllBulkMembers(false)">বাদ দিন</button>
+              </div>
+            </div>
+            <div class="bulk-member-list">${memberChecks}</div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="bulk-skip-dup" checked />
+              <span>আগে জমা থাকা তারিখ বাদ দিন</span>
+            </label>
+            <div class="range-preview" id="bulk-preview-box">
+              সদস্য টিক দিলে মোট হিসাব দেখা যাবে
+            </div>
+            <button class="btn btn-primary" onclick="applyBulkRangeDeposits()">✅ নির্বাচিত সদস্যদের ডিপোজিট আদায় করুন</button>
+          </div>
+        `;
+      } else if (currentView.adminTab === 'json') {
+        tabContent = `
+          <div class="card">
+            <div class="card-title">💻 লাইভ ডেটাবেজ কোডিং (JSON)</div>
+            <textarea id="admin-json-editor" class="code-textarea">${escapeHtml(JSON.stringify(db, null, 2))}</textarea>
+            <div style="margin-top:10px;">
+              <button class="btn btn-primary" onclick="saveAdminJsonCode()">💾 কোড সেভ ও আপডেট করুন</button>
+            </div>
+          </div>
+        `;
+      } else if (currentView.adminTab === 'html') {
+        const fullCode = generateFullUpdatedHtmlCode();
+        tabContent = `
+          <div class="card">
+            <div class="card-title">📄 সম্পূর্ণ অ্যাপ কোড (HTML)</div>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px;">
+              সব নতুন হিসাব ও AI ফিচারসহ আপডেটেড HTML কোড। এটি শেয়ার বা হোস্ট করলে সবার অ্যাপ অটো আপডেট হবে।
+            </p>
+            <textarea id="admin-html-viewer" class="code-textarea" readonly>${escapeHtml(fullCode)}</textarea>
+            <div class="btn-row" style="margin-top:10px;">
+              <button class="btn btn-accent" onclick="copyFullHtmlCode()">📋 কোড কপি</button>
+              <button class="btn btn-success" onclick="downloadUpdatedHtml()">📲 HTML ডাউনলোড</button>
+            </div>
+          </div>
+        `;
+      } else {
+        tabContent = `
+          <div class="card">
+            <div class="card-title">🌐 রিয়েল-টাইম ক্লাউড অটো-আপডেট (ঐচ্ছিক)</div>
+            <p style="font-size:12.5px; color:var(--muted); margin-bottom:10px; line-height:1.5;">
+              ফ্রি Firebase Realtime DB-এর <code>.json</code> লিংক এখানে বসালে সকল ইউজারের অ্যাপে অটো-আপডেট চলে যাবে:
+            </p>
+            <div class="form-group">
+              <label>ক্লাউড সিঙ্ক JSON URL</label>
+              <input type="url" id="cloud-sync-url" class="form-control" value="${escapeHtml(db.cloudSyncUrl || '')}" placeholder="https://example.firebaseio.com/barakah.json" />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="saveCloudUrl()">💾 লিংক সেভ</button>
+              <button class="btn btn-accent" onclick="pushToCloud(false)">☁️ এখনই সিঙ্ক</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">🔑 এডমিন নাম ও পিন পরিবর্তন</div>
+            <div class="form-group">
+              <label>এডমিনের নাম</label>
+              <input type="text" id="new-admin-name" class="form-control" value="${escapeHtml(db.adminName || 'Shohag Hossain')}" />
+            </div>
+            <div class="form-group">
+              <label>নতুন এডমিন পিন</label>
+              <input type="text" id="new-admin-pin" class="form-control" value="${escapeHtml(db.adminPin || '@Shohag007')}" />
+            </div>
+            <button class="btn btn-primary" onclick="updateAdminSettings()">সেটিংস আপডেট করুন</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title">⚠️ ডেটা রিসেট</div>
+            <button class="btn btn-danger" onclick="resetAllData()">🗑️ সব হিসাব শুরু অবস্থায় ফিরিয়ে নিন</button>
+          </div>
+        `;
+      }
+
+      return `
+        <header class="page-header" style="background: #1e293b;">
+          <button class="back-btn" onclick="goBack()">← ব্যাক</button>
+          <div class="page-title">⚙️ এডমিন প্যানেল</div>
+          <button class="back-btn" style="background:#dc2626; border-color:#ef4444;" onclick="adminLogout()">লগআউট</button>
+        </header>
+
+        <div class="content-pad">
+          <div class="admin-tabs">
+            <button class="tab-btn ai-tab ${currentView.adminTab === 'ai' ? 'active' : ''}" onclick="switchAdminTab('ai')">🤖 AI অ্যাসিস্ট্যান্ট</button>
+            <button class="tab-btn ${currentView.adminTab === 'bulk' ? 'active' : ''}" onclick="switchAdminTab('bulk')">📅 রেঞ্জ ডিপোজিট</button>
+            <button class="tab-btn ${currentView.adminTab === 'html' ? 'active' : ''}" onclick="switchAdminTab('html')">📲 HTML</button>
+            <button class="tab-btn ${currentView.adminTab === 'json' ? 'active' : ''}" onclick="switchAdminTab('json')">💻 JSON</button>
+            <button class="tab-btn ${currentView.adminTab === 'settings' ? 'active' : ''}" onclick="switchAdminTab('settings')">⚙️ সেটিংস</button>
+          </div>
+
+          ${tabContent}
+        </div>
+      `;
+    }
+
+    function switchAdminTab(tab) {
+      currentView.adminTab = tab;
+      persistViewState();
+      render();
+    }
+
+    function toggleAllBulkMembers(checked) {
+      document.querySelectorAll('.bulk-member-cb').forEach(cb => cb.checked = checked);
+      updateBulkPreview();
+    }
+
+    function updateBulkPreview() {
+      const startISO = document.getElementById('bulk-start')?.value;
+      const endISO = document.getElementById('bulk-end')?.value;
+      const amt = Number(document.getElementById('bulk-amount')?.value || 0);
+      const selectedCount = document.querySelectorAll('.bulk-member-cb:checked').length;
+      const dates = getDatesInRange(startISO, endISO);
+      const box = document.getElementById('bulk-preview-box');
+      if (!box) return;
+      if (!dates.length) {
+        box.innerHTML = '⚠️ সঠিক শুরুর ও শেষ তারিখ নির্বাচন করুন';
+        return;
+      }
+      if (!selectedCount) {
+        box.innerHTML = `📅 ${formatDateBn(startISO)} — ${formatDateBn(endISO)} (${toBn(dates.length)} দিন)<br>উপরের তালিকা থেকে কমপক্ষে ১ জন সদস্য টিক দিন`;
+        return;
+      }
+      const total = selectedCount * dates.length * amt;
+      box.innerHTML = `👥 নির্বাচিত: <b>${toBn(selectedCount)} জন</b> • <b>${toBn(dates.length)} দিন</b> (${formatDateBn(startISO)} — ${formatDateBn(endISO)})<br>আনুমানিক মোট আদায়: <b>৳ ${toBn(total)}</b>`;
+    }
+
+    function applyBulkRangeDeposits() {
+      if (!requireAdmin()) return;
+      const startISO = document.getElementById('bulk-start').value;
+      const endISO = document.getElementById('bulk-end').value;
+      const amt = Number(document.getElementById('bulk-amount').value);
+      const note = document.getElementById('bulk-note').value.trim() || 'দৈনিক কিস্তি';
+      const skipDup = document.getElementById('bulk-skip-dup').checked;
+
+      const selectedIds = Array.from(document.querySelectorAll('.bulk-member-cb:checked')).map(cb => Number(cb.value));
+      const dates = getDatesInRange(startISO, endISO);
+
+      if (!selectedIds.length) {
+        showToast('কমপক্ষে ১ জন সদস্য নির্বাচন করুন');
+        return;
+      }
+      if (!dates.length) {
+        showToast('সঠিক তারিখ রেঞ্জ নির্বাচন করুন');
+        return;
+      }
+      if (!amt || amt <= 0) {
+        showToast('সঠিক টাকার পরিমাণ লিখুন');
+        return;
+      }
+
+      let totalEntries = 0;
+      selectedIds.forEach(mId => {
+        const member = db.members.find(m => m.id === mId);
+        if (!member) return;
+        const existingDates = new Set((member.deposits || []).map(d => d.date));
+        dates.forEach((dStr, idx) => {
+          if (skipDup && existingDates.has(dStr)) return;
+          member.deposits.push({
+            id: 'd_' + Date.now() + '_' + mId + '_' + idx + '_' + Math.floor(Math.random() * 1000),
+            date: dStr,
+            amount: amt,
+            note
+          });
+          totalEntries++;
+        });
+      });
+
+      if (totalEntries === 0) {
+        showToast('নির্বাচিত তারিখগুলোতে আগেই জমা রয়েছে!');
+        return;
+      }
+
+      saveDatabase();
+      showToast(`মোট ${toBn(totalEntries)}টি কিস্তি (৳${toBn(totalEntries * amt)}) সফলভাবে আদায় হয়েছে!`);
+      render();
+    }
+
+    function saveAdminJsonCode() {
+      if (!requireAdmin()) return;
+      try {
+        const raw = document.getElementById('admin-json-editor').value;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.members)) {
+          showToast('কোডে ভুল আছে! members তালিকা থাকতে হবে।');
+          return;
+        }
+        db = ensureDbStructure(parsed);
+        saveDatabase();
+        showToast('কোডিং থেকে ডেটা আপডেট হয়েছে!');
+        render();
+      } catch (e) {
+        showToast('JSON কোড সিনট্যাক্স সঠিক নয়!');
+      }
+    }
+
+    function copyTextSafe(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(successMsg);
+        }).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg);
+      } catch (e) {
+        showToast('কপি করা যায়নি');
+      }
+      ta.remove();
+    }
+
+    function copyFullHtmlCode() {
+      const el = document.getElementById('admin-html-viewer');
+      copyTextSafe(el.value, 'সম্পূর্ণ কোড কপি হয়েছে!');
+    }
+
+    function downloadUpdatedHtml() {
+      if (!requireAdmin()) return;
+      saveDatabase();
+      const code = generateFullUpdatedHtmlCode();
+      const blob = new Blob([code], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `barakah_multicare_${getTodayISO()}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('আপডেটেড HTML ফাইল ডাউনলোড হয়েছে');
+    }
+
+    function saveCloudUrl() {
+      if (!requireAdmin()) return;
+      db.cloudSyncUrl = document.getElementById('cloud-sync-url').value.trim();
+      saveDatabase(true);
+      showToast('ক্লাউড সিঙ্ক লিংক সেভ হয়েছে');
+    }
+
+    function updateAdminSettings() {
+      if (!requireAdmin()) return;
+      const newName = document.getElementById('new-admin-name').value.trim();
+      const newPin = document.getElementById('new-admin-pin').value.trim();
+      if (!newPin || newPin.length < 3) {
+        showToast('কমপক্ষে ৩ সংখ্যার পিন দিন');
+        return;
+      }
+      if (newName) db.adminName = newName;
+      db.adminPin = newPin;
+      saveDatabase();
+      showToast('এডমিন সেটিংস আপডেট হয়েছে!');
+      render();
+    }
+
+    function resetAllData() {
+      if (!requireAdmin()) return;
+      askConfirm('সতর্কতা: ডিফল্ট অবস্থায় ফিরে গেলে পরবর্তীতে এন্ট্রি করা সব কিস্তি মুছে যাবে! নিশ্চিত?', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        const defEl = document.getElementById('default-db');
+        db = ensureDbStructure(JSON.parse(defEl.textContent));
+        saveDatabase();
+        showToast('সব ডেটা রিসেট করা হয়েছে');
+        render();
+      });
+    }
+
+    // প্রথমবার রেন্ডার ও ক্লাউড অটো-চেক
+    render();
+    if (db.cloudSyncUrl) {
+      syncFromCloud(true);
+      setInterval(() => {
+        if (!isAdminAuthenticated) syncFromCloud(true);
+      }, 25000);
+    }
+  </script></body></html>

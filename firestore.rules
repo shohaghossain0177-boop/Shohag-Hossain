@@ -1,0 +1,398 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // Reusable Hardened Global Primitives
+    // =========================================================================
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrapAdmin() {
+      return isVerifiedUser() && request.auth.token.email == 'shohaghossain0177@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrapAdmin() || (
+        isVerifiedUser() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidDateString(s) {
+      return s is string && s.size() == 10 && s.matches('^\\d{4}-\\d{2}-\\d{2}$');
+    }
+
+    // =========================================================================
+    // Validation Blueprints (Anti-Update-Gap)
+    // =========================================================================
+
+    function isValidAppConfig(cfg) {
+      return cfg is map
+        && cfg.keys().hasAll([
+          'homeTickerText',
+          'bkashTickerText',
+          'bkashNumber',
+          'adminPhone',
+          'themeColor',
+          'darkMode',
+          'fundTarget',
+          'sortBy',
+          'enabledToggles',
+          'customToggles',
+          'pinnedNotice',
+          'automatedPopups',
+          'appVersion',
+          'updateManifestUrl',
+          'changelog'
+        ])
+        && cfg.keys().hasOnly([
+          'homeTickerText',
+          'bkashTickerText',
+          'bkashNumber',
+          'adminPhone',
+          'themeColor',
+          'darkMode',
+          'fundTarget',
+          'sortBy',
+          'enabledToggles',
+          'customToggles',
+          'pinnedNotice',
+          'automatedPopups',
+          'appVersion',
+          'updateManifestUrl',
+          'changelog'
+        ])
+        && cfg.homeTickerText is string && cfg.homeTickerText.size() <= 500
+        && cfg.bkashTickerText is string && cfg.bkashTickerText.size() <= 500
+        && cfg.bkashNumber is string && cfg.bkashNumber.size() <= 30
+        && cfg.adminPhone is string && cfg.adminPhone.size() <= 30
+        && cfg.themeColor is string && cfg.themeColor.size() <= 30
+        && cfg.darkMode is bool
+        && cfg.fundTarget is number && cfg.fundTarget >= 0 && cfg.fundTarget <= 1000000000
+        && cfg.sortBy is string && (cfg.sortBy == 'id' || cfg.sortBy == 'amount_desc')
+        && cfg.enabledToggles is map
+        && cfg.customToggles is list && cfg.customToggles.size() <= 30
+        && (cfg.customToggles.size() == 0 || cfg.customToggles[0] is map)
+        && (cfg.pinnedNotice == null || cfg.pinnedNotice is map)
+        && cfg.automatedPopups is list && cfg.automatedPopups.size() <= 20
+        && (cfg.automatedPopups.size() == 0 || cfg.automatedPopups[0] is map)
+        && cfg.appVersion is string && cfg.appVersion.size() >= 1 && cfg.appVersion.size() <= 30
+        && cfg.updateManifestUrl is string && cfg.updateManifestUrl.size() <= 500
+        && cfg.changelog is list && cfg.changelog.size() <= 30
+        && (cfg.changelog.size() == 0 || cfg.changelog[0] is map);
+    }
+
+    function isValidUnityConfig(data) {
+      return data.keys().hasAll([
+          'adminName',
+          'cloudSyncUrl',
+          'updatedAtMs',
+          'lastBackup',
+          'appConfig',
+          'isPublic',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'adminName',
+          'cloudSyncUrl',
+          'updatedAtMs',
+          'lastBackup',
+          'appConfig',
+          'isPublic',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.adminName is string && data.adminName.size() >= 1 && data.adminName.size() <= 100
+        && data.cloudSyncUrl is string && data.cloudSyncUrl.size() <= 500
+        && data.updatedAtMs is number && data.updatedAtMs >= 0
+        && data.lastBackup is string && data.lastBackup.size() <= 100
+        && isValidAppConfig(data.appConfig)
+        && data.isPublic is bool && data.isPublic == true
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMemberPublic(data) {
+      return data.keys().hasAll(['memberId', 'name', 'maskedPhone', 'isPublic', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['memberId', 'name', 'maskedPhone', 'isPublic', 'createdAt', 'updatedAt'])
+        && data.memberId is int && data.memberId >= 1 && data.memberId <= 1000000
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 120
+        && data.maskedPhone is string && data.maskedPhone.size() <= 30
+        && data.isPublic is bool && data.isPublic == true
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMemberContact(data) {
+      return data.keys().hasAll(['memberId', 'phone', 'adminEmail', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['memberId', 'phone', 'adminEmail', 'createdAt', 'updatedAt'])
+        && data.memberId is int && data.memberId >= 1 && data.memberId <= 1000000
+        && data.phone is string && data.phone.size() >= 3 && data.phone.size() <= 30
+        && data.adminEmail is string && data.adminEmail.size() >= 3 && data.adminEmail.size() <= 160
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidDeposit(data) {
+      return data.keys().hasAll(['depositId', 'memberId', 'date', 'amount', 'note', 'isPublic', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['depositId', 'memberId', 'date', 'amount', 'note', 'isPublic', 'createdAt', 'updatedAt'])
+        && isValidId(data.depositId)
+        && data.memberId is int && data.memberId >= 1 && data.memberId <= 1000000
+        && isValidDateString(data.date)
+        && data.amount is number && data.amount > 0 && data.amount <= 10000000
+        && data.note is string && data.note.size() <= 200
+        && data.isPublic is bool && data.isPublic == true
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidDraw(data) {
+      return data.keys().hasAll(['drawId', 'memberId', 'memberName', 'date', 'amount', 'note', 'isPublic', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['drawId', 'memberId', 'memberName', 'date', 'amount', 'note', 'isPublic', 'createdAt', 'updatedAt'])
+        && isValidId(data.drawId)
+        && data.memberId is int && data.memberId >= 1 && data.memberId <= 1000000
+        && data.memberName is string && data.memberName.size() >= 1 && data.memberName.size() <= 120
+        && isValidDateString(data.date)
+        && data.amount is number && data.amount >= 0 && data.amount <= 100000000
+        && data.note is string && data.note.size() <= 200
+        && data.isPublic is bool && data.isPublic == true
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidRule(data) {
+      return data.keys().hasAll(['ruleId', 'order', 'title', 'description', 'isPublic', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['ruleId', 'order', 'title', 'description', 'isPublic', 'createdAt', 'updatedAt'])
+        && isValidId(data.ruleId)
+        && data.order is int && data.order >= 0 && data.order <= 10000
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 160
+        && data.description is string && data.description.size() >= 1 && data.description.size() <= 1000
+        && data.isPublic is bool && data.isPublic == true
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAdminUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'email', 'role', 'createdAt', 'updatedAt'])
+        && isValidId(data.uid)
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 160
+        && data.role is string && data.role == 'admin'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAdminSecret(data) {
+      return data.keys().hasAll(['passcode', 'updatedBy', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['passcode', 'updatedBy', 'createdAt', 'updatedAt'])
+        && data.passcode is string && data.passcode.size() >= 4 && data.passcode.size() <= 64
+        && data.updatedBy is string && data.updatedBy.size() >= 3 && data.updatedBy.size() <= 160
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    // =========================================================================
+    // Collection Match Blocks (Exhaustive coverage of firebase-blueprint.json)
+    // =========================================================================
+
+    match /unityConfig/{configId} {
+      allow get: if isValidId(configId) && (resource == null || existing().isPublic == true || isAdmin());
+      allow list: if resource.data.isPublic == true;
+      allow create: if isVerifiedUser()
+        && isValidId(configId)
+        && isValidUnityConfig(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(configId)
+        && isValidUnityConfig(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'adminName',
+          'cloudSyncUrl',
+          'updatedAtMs',
+          'lastBackup',
+          'appConfig',
+          'updatedAt'
+        ])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(configId) && isAdmin();
+    }
+
+    match /members/{memberId} {
+      allow get: if isValidId(memberId) && (resource == null || existing().isPublic == true || isAdmin());
+      allow list: if resource.data.isPublic == true;
+      allow create: if isVerifiedUser()
+        && isValidId(memberId)
+        && isValidMemberPublic(incoming())
+        && string(incoming().memberId) == memberId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(memberId)
+        && isValidMemberPublic(incoming())
+        && incoming().memberId == existing().memberId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'maskedPhone', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(memberId) && isAdmin();
+    }
+
+    // PII Isolation: Full phone numbers strictly restricted to verified admins
+    match /memberContacts/{memberId} {
+      allow get: if isVerifiedUser() && isValidId(memberId) && isAdmin();
+      allow list: if isBootstrapAdmin()
+        || (isVerifiedUser() && resource.data.adminEmail == request.auth.token.email);
+      allow create: if isVerifiedUser()
+        && isValidId(memberId)
+        && isValidMemberContact(incoming())
+        && string(incoming().memberId) == memberId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(memberId)
+        && isValidMemberContact(incoming())
+        && incoming().memberId == existing().memberId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['phone', 'adminEmail', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(memberId) && isAdmin();
+    }
+
+    match /deposits/{depositId} {
+      allow get: if isValidId(depositId) && (resource == null || existing().isPublic == true || isAdmin());
+      allow list: if resource.data.isPublic == true;
+      allow create: if isVerifiedUser()
+        && isValidId(depositId)
+        && isValidDeposit(incoming())
+        && incoming().depositId == depositId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin()
+        && existsAfter(/databases/$(database)/documents/members/$(string(incoming().memberId)));
+      allow update: if isVerifiedUser()
+        && isValidId(depositId)
+        && isValidDeposit(incoming())
+        && incoming().depositId == existing().depositId
+        && incoming().memberId == existing().memberId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['date', 'amount', 'note', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(depositId) && isAdmin();
+    }
+
+    match /draws/{drawId} {
+      allow get: if isValidId(drawId) && (resource == null || existing().isPublic == true || isAdmin());
+      allow list: if resource.data.isPublic == true;
+      allow create: if isVerifiedUser()
+        && isValidId(drawId)
+        && isValidDraw(incoming())
+        && incoming().drawId == drawId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin()
+        && existsAfter(/databases/$(database)/documents/members/$(string(incoming().memberId)));
+      allow update: if isVerifiedUser()
+        && isValidId(drawId)
+        && isValidDraw(incoming())
+        && incoming().drawId == existing().drawId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['memberId', 'memberName', 'date', 'amount', 'note', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(drawId) && isAdmin();
+    }
+
+    match /rules/{ruleId} {
+      allow get: if isValidId(ruleId) && (resource == null || existing().isPublic == true || isAdmin());
+      allow list: if resource.data.isPublic == true;
+      allow create: if isVerifiedUser()
+        && isValidId(ruleId)
+        && isValidRule(incoming())
+        && incoming().ruleId == ruleId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(ruleId)
+        && isValidRule(incoming())
+        && incoming().ruleId == existing().ruleId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['order', 'title', 'description', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(ruleId) && isAdmin();
+    }
+
+    // Trusted Admin Registry (No list; verified admins only)
+    match /admins/{uid} {
+      allow get: if isVerifiedUser() && isValidId(uid) && isAdmin();
+      allow create: if isVerifiedUser()
+        && isValidId(uid)
+        && isValidAdminUser(incoming())
+        && incoming().uid == uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isBootstrapAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(uid)
+        && isValidAdminUser(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'updatedAt'])
+        && isBootstrapAdmin();
+      allow delete: if isVerifiedUser() && isValidId(uid) && isBootstrapAdmin();
+    }
+
+    // Dedicated Admin Passcode Storage (Strictly separated from member phone numbers)
+    match /adminSecrets/{secretId} {
+      allow get: if isVerifiedUser() && isValidId(secretId) && isAdmin();
+      allow create: if isVerifiedUser()
+        && isValidId(secretId)
+        && isValidAdminSecret(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && isAdmin();
+      allow update: if isVerifiedUser()
+        && isValidId(secretId)
+        && isValidAdminSecret(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['passcode', 'updatedBy', 'updatedAt'])
+        && isAdmin();
+      allow delete: if isVerifiedUser() && isValidId(secretId) && isBootstrapAdmin();
+    }
+  }
+}

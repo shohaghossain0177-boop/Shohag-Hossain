@@ -1,0 +1,8 @@
+{
+  "name": "BARAKAH MULTICARE HOSPITAL UNITY",
+  "description": "দৈনিক ডিপোজিট, সদস্য হিসাব, ড্র ব্যবস্থাপনা, নিয়মাবলি, পিন নোটিশ এবং ইন-অ্যাপ আপডেট সিস্টেম — BARAKAH MULTICARE HOSPITAL UNITY।",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
